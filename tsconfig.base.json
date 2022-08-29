@@ -14,7 +14,9 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@jest-automation/dto": ["packages/dto/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
