@@ -54,7 +54,7 @@ export function Builder<T>(dtoType: Class<T>): Class<DtoBuilder<T>> {
   // Generate a new class which will be the DTO
   const GeneratedBuilder = class GeneratedBuilder extends AbstractDtoBuilder<T> {
     constructor() {
-      super(dtoType);
+      super(dtoType, dto);
       const propertyNames = getDtoPropertyDecorators(dto)
       const self = this as unknown as Dict;
       propertyNames.forEach((key) => {
