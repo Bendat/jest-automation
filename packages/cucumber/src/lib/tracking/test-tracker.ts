@@ -1,0 +1,33 @@
+import Bag from './bag';
+import TestTrackingSubscribers from './test-subscribers';
+
+export default class TestTrackingEvents {
+  #subscribers: TestTrackingSubscribers;
+  constructor(subscribers: TestTrackingSubscribers) {
+    this.#subscribers = subscribers;
+  }
+  featureStarted = (title: string) =>
+    alertSubscribers(this.#subscribers.featureStarted, title);
+
+  featureEnded = () => alertSubscribers(this.#subscribers.featureEnded);
+
+  scenarioOutlineStarted = (title: string | undefined) =>
+    alertSubscribers(this.#subscribers.scenarioOutlineStarted, title);
+
+  scenarioOutlineEnded = () =>
+    alertSubscribers(this.#subscribers.scenarioOutlineEnded);
+
+  scenarioStarted = (title: string | undefined) =>
+    alertSubscribers(this.#subscribers.scenarioStarted, title);
+
+  scenarioEnded = () => alertSubscribers(this.#subscribers.scenarioEnded);
+
+  stepStarted = (keyword: string, sentence: string, ..._: any[]) =>
+    alertSubscribers(this.#subscribers.stepStarted, keyword, sentence);
+
+  stepEnded = () => alertSubscribers(this.#subscribers.stepEnded);
+}
+
+function alertSubscribers(subscribers: Bag, ...args: any) {
+  subscribers.forEach((it) => it(...args));
+}

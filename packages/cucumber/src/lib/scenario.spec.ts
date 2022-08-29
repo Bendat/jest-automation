@@ -1,0 +1,120 @@
+import Background from './background';
+import { GherkinBackground, GherkinScenario } from './parsing/gherkin-objects';
+import Scenario from './scenario';
+import TestTrackingSubscribers from './tracking/test-subscribers';
+import TestTrackingEvents from './tracking/test-tracker';
+import { ScenarioCallbackObject } from './types';
+jest.mock('./tracking/test-tracker', () => {
+  return jest.fn().mockImplementation(() => {
+    return {
+      scenarioStarted: jest.fn(),
+      scenarioEnded: jest.fn(),
+      stepStarted: jest.fn(),
+      stepEnded: jest.fn(),
+    };
+  });
+});
+
+describe('scenario', () => {
+  describe('execute', () => {
+    const jestItMock = jest.fn(async (...args) => {
+      const [title, action] = args;
+      expect(title).toBe('Scenario: test');
+      await action();
+    });
+    it('should do nothing when executed without steps', async () => {
+      const subscribers = new TestTrackingSubscribers();
+      const events = new TestTrackingEvents(subscribers);
+      const scenario = new GherkinScenario('test', [], undefined, []);
+      const sut = new Scenario('test', scenario, [], [], events);
+
+      sut.execute(jestItMock as unknown as jest.It);
+      expect(jestItMock).toBeCalledTimes(1);
+      // When the test function is called, a scenario
+      // started event will execute.
+      expect(events.scenarioStarted).toBeCalledTimes(1);
+      expect.assertions(3);
+    });
+    const step = {
+      keyword: 'Given',
+      text: 'a test',
+      variables: [],
+    };
+    describe('with backgrounds', () => {
+      it('should run background steps', () => {
+        const subscribers = new TestTrackingSubscribers();
+        const events = new TestTrackingEvents(subscribers);
+        const scenario = new GherkinScenario('test', [], undefined, []);
+        const innerCbMockFn = jest.fn();
+        const cb = ({ Given }: ScenarioCallbackObject) => {
+          Given('a test', innerCbMockFn);
+        };
+        const background = new Background('', cb);
+        const rawBackground = new GherkinBackground('', [step]);
+        const sut = new Scenario(
+          'test',
+          scenario,
+          [background],
+          [rawBackground],
+          events,
+        );
+        sut.execute(jestItMock as unknown as jest.It);
+        expect(jestItMock).toBeCalledTimes(1);
+        expect(sut.steps.Given['a test'].action).toBeCalledTimes(1);
+        expect(innerCbMockFn).toHaveBeenCalledTimes(1);
+        expect.assertions(4);
+      });
+
+      it('should run scenario steps from background', async () => {
+        const subscribers = new TestTrackingSubscribers();
+        const events = new TestTrackingEvents(subscribers);
+        const scenario = new GherkinScenario('test', [step], undefined, []);
+        // mocks not playing nice here (due to async?)
+        // the async callback is normally handled by jest
+        // itself but here it is not.
+        let stepExecuted = false;
+        let testExecuted = false;
+        const cb = ({ Given }: ScenarioCallbackObject) => {
+          Given('a test', () => {
+            stepExecuted = true;
+          });
+        };
+        const background = new Background('', cb);
+
+        const sut = new Scenario('test', scenario, [background], [], events);
+        const testFn = (_: string, fn: any) => {
+          testExecuted = true;
+          return fn();
+        };
+        await sut.execute(testFn as unknown as jest.It);
+        expect(stepExecuted).toBe(true);
+        expect(testExecuted).toBe(true);
+      });
+    });
+    describe('just scenario steps', () => {
+      it('should run scenario steps', async () => {
+        const subscribers = new TestTrackingSubscribers();
+        const events = new TestTrackingEvents(subscribers);
+        const scenario = new GherkinScenario('test', [step], undefined, []);
+        // mocks not playing nice here (due to async?)
+        // the async callback is normally handled by jest
+        // itself but here it is not.
+        let stepExecuted = false;
+        let testExecuted = false;
+
+        const sut = new Scenario('test', scenario, [], [], events);
+        const { Given } = sut;
+        Given('a test', () => {
+          stepExecuted = true;
+        });
+        const testFn = (_: string, fn: any) => {
+          testExecuted = true;
+          return fn();
+        };
+        await sut.execute(testFn as unknown as jest.It);
+        expect(stepExecuted).toBe(true);
+        expect(testExecuted).toBe(true);
+      });
+    });
+  });
+});

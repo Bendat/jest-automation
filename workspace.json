@@ -3,6 +3,7 @@
   "version": 2,
   "projects": {
     "cucumber": "packages/cucumber",
-    "dto": "packages/dto"
+    "dto": "packages/dto",
+    "utilities": "packages/utilities"
   }
 }
