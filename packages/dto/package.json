@@ -1,8 +1,8 @@
 {
   "name": "@jest-automation/dto",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Bendat/jest-automation"
+    "url": "https://github.com/Bendat/jest-automation/tree/main/packages/dto"
   }
 }
