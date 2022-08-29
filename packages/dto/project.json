@@ -30,5 +30,5 @@
       }
     }
   },
-  "tags": []
+  "tags": ["jest", "automation", "builder-pattern", "dto"]
 }
