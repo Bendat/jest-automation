@@ -41,10 +41,10 @@ export type DtoBuilder<T> = AbstractDtoBuilder<T> & DtoBuilderTransformer<T>;
 /**
  * Generates a new *DTOBuilder class which containers builder/setter
  * functions for each property/field in the source DTO.
- * 
+ *
  * @param dtoType The Class blueprint of the DTO type to create a
  * builer for. I.E. for `class FooDTO`, `FooDTO` is passed, not `new fooDTO`
- * 
+ *
  * @returns an instantiable class which mirrors the DTO type
  * but with builder/setter functions instead of properties/fields -
  * I.E. `foo: string` becomes `foo: (value: string) => DtoBuilder<T>`
@@ -54,8 +54,8 @@ export function Builder<T>(dtoType: Class<T>): Class<DtoBuilder<T>> {
   // Generate a new class which will be the DTO
   const GeneratedBuilder = class GeneratedBuilder extends AbstractDtoBuilder<T> {
     constructor() {
-      super(dtoType);
-      const propertyNames = getDtoPropertyDecorators(dto)
+      super(dtoType, dto);
+      const propertyNames = getDtoPropertyDecorators(dto);
       const self = this as unknown as Dict;
       propertyNames.forEach((key) => {
         self[key] = (arg: T) => this.set(key)(arg);
