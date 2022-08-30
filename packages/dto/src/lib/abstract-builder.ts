@@ -1,6 +1,6 @@
 import { validateSync, ValidationError } from 'class-validator';
 import { FailedValidationError } from './errors/validation-errors';
-import { Class, Dict, Instance } from './types';
+import { Class, Dict } from './types';
 
 export abstract class AbstractDtoBuilder<TDtoType> {
   #dto: TDtoType & { constructor: { name: string } };
@@ -14,7 +14,7 @@ export abstract class AbstractDtoBuilder<TDtoType> {
     if (instance) {
       this.#dto = instance;
     } else {
-      this.#dto = new prototype() as Instance<TDtoType>;
+      this.#dto = new prototype() as TDtoType;
     }
   }
 
@@ -30,7 +30,7 @@ export abstract class AbstractDtoBuilder<TDtoType> {
    * was added to this builder, validated by default.
    */
 
-  build = (validate: boolean = true): TDtoType => {
+  build = (validate = true): TDtoType => {
     const validated = validateSync(this.#dto as unknown as object);
     if (validate && validated.length > 0) {
       const type = this.#dto.constructor.name;

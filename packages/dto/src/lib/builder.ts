@@ -50,10 +50,10 @@ export type DtoBuilder<T> = AbstractDtoBuilder<T> & DtoBuilderTransformer<T>;
  * I.E. `foo: string` becomes `foo: (value: string) => DtoBuilder<T>`
  */
 export function Builder<T>(dtoType: Class<T>): Class<DtoBuilder<T>> {
-  const dto = new dtoType() as T;
   // Generate a new class which will be the DTO
   const GeneratedBuilder = class GeneratedBuilder extends AbstractDtoBuilder<T> {
     constructor() {
+      const dto = new dtoType() as T;
       super(dtoType, dto);
       const propertyNames = getDtoPropertyDecorators(dto);
       const self = this as unknown as Dict;
