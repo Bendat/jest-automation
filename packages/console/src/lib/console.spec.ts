@@ -46,12 +46,12 @@ describe('console', () => {
         throw new Error('bad error');
       };
       const result = () => grouping('a test group', action);
-      expect(result).toThrow('bad error');
+      expect(result).toThrow('grouping failed due to action throwing an error Error: bad error');
       expect(groupSpy).toHaveBeenCalled();
       expect(groupEndSpy).toHaveBeenCalled();
     });
 
-    it('Should successfully group an action which errors promise', async () => {
+    it('Should successfully group an action with a promise', async () => {
       const groupSpy = jest.spyOn(console, 'group');
       const groupEndSpy = jest.spyOn(console, 'groupEnd');
 

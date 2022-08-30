@@ -128,12 +128,15 @@ function consoleGroupEnd() {
 
 const groupStack: (ConsoleGroupToken | string)[] = [];
 
-export function grouping<T>(title: string, action: () => T | Promise<T>): T | Promise<T> {
+export function grouping<T>(
+  title: string,
+  action: () => T | Promise<T>
+): T | Promise<T> {
   console.group(title);
   try {
     return action();
   } catch (e) {
-    throw new Error('grouping failed due to action throwing an error', e);
+    throw new Error('grouping failed due to action throwing an error ' + e);
   } finally {
     console.groupEnd();
   }
@@ -155,13 +158,13 @@ export function startGroup(
   groupStack.push(type);
   if (groupsEnabled) {
     console.group([type, ...tags].join(' ').trim());
-  }else{
-    entitle(type.toString())
+  } else {
+    entitle(type.toString());
   }
 }
 
 export function endGroup(type: ConsoleGroupToken | string) {
-  if(groupsEnabled){
+  if (groupsEnabled) {
     const peek = groupStack.at(-1);
     if (peek !== type) {
       console.warn(
