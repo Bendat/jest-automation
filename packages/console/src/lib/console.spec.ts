@@ -4,18 +4,10 @@ import {
   useConsoleGroups,
   startGroup,
   grouping,
-  entitle,
 } from './console';
 import { ConsoleGroupToken } from './group-tokens';
 
-test('a', () => {
-  console.group('Outer Group');
-  console.group('Inner Group');
-  console.log('Http Request Sent');
-  console.log('Http Response Received');
-  console.groupEnd();
-  console.groupEnd();
-});
+
 useConsoleGroups();
 describe('console', () => {
   describe('group', () => {

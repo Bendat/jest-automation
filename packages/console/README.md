@@ -15,7 +15,7 @@ For example take the following code:
 console.group('Outer Group');
 console.group('Inner Group');
 console.log('Http Request Sent');
-console.log('Http Response Received');
+console.log('Http Response Received');  
 console.groupEnd();
 console.groupEnd();
 ```

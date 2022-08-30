@@ -133,7 +133,7 @@ export function grouping<T>(title: string, action: () => T | Promise<T>): T | Pr
   try {
     return action();
   } catch (e) {
-    throw e;
+    throw new Error('grouping failed due to action throwing an error', e);
   } finally {
     console.groupEnd();
   }
