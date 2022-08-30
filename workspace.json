@@ -3,6 +3,8 @@
   "version": 2,
   "projects": {
     "cucumber": "packages/cucumber",
+    "console": "packages/console",
     "dto": "packages/dto",
+    "shared-utilities": "packages/shared-utilities"
   }
 }

@@ -1,4 +1,4 @@
-import { IsString, validate } from 'class-validator';
+import { IsString } from 'class-validator';
 import { AbstractDtoBuilder } from './abstract-builder';
 import { Property } from './dto-decorators';
 import { FailedValidationError } from './errors/validation-errors';

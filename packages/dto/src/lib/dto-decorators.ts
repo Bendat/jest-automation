@@ -10,7 +10,7 @@ function key(name: string) {
  * 
  * @returns a PropertyDecorator wrapping the class property.
  */
-export function Property(target: Object, propertyKey: string | symbol) {
+export function Property(target: unknown, propertyKey: string | symbol) {
   const { constructor } = target;
   const { name } = constructor;
   const variables: Set<unknown> = Reflect.getOwnMetadata(key(name), target.constructor) ?? new Set();
@@ -25,7 +25,7 @@ export function Property(target: Object, propertyKey: string | symbol) {
  * @param target The DTO instance to check against
  * @returns A list of property names from the DTO object.
  */
-export function getDtoPropertyDecorators(target: Object): string[] {
+export function getDtoPropertyDecorators(target: unknown): string[] {
   // get info about keys that used in current property
   return Reflect.getOwnMetadata(
     key(target.constructor.name),
