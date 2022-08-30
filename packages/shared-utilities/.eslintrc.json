@@ -1,0 +1,27 @@
+{
+  "extends": ["../../.eslintrc.json"],
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    {
+      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "no-misused-new": 0,
+        "@typescript-eslint/no-misused-new": 0
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "no-misused-new": 0,
+        "@typescript-eslint/no-misused-new": 0
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {
+        "no-misused-new": 0,
+        "@typescript-eslint/no-misused-new": 0
+      }
+    }
+  ]
+}
