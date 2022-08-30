@@ -4,24 +4,15 @@
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "no-misused-new": 0,
-        "@typescript-eslint/no-misused-new": 0
-      }
+      "rules": { }
     },
     {
       "files": ["*.ts", "*.tsx"],
-      "rules": {
-        "no-misused-new": 0,
-        "@typescript-eslint/no-misused-new": 0
-      }
+      "rules": {}
     },
     {
       "files": ["*.js", "*.jsx"],
-      "rules": {
-        "no-misused-new": 0,
-        "@typescript-eslint/no-misused-new": 0
-      }
+      "rules": {}
     }
   ]
 }
