@@ -4,6 +4,5 @@
   "projects": {
     "cucumber": "packages/cucumber",
     "dto": "packages/dto",
-    "utilities": "packages/utilities"
   }
 }

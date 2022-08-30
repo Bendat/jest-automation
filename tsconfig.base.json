@@ -17,7 +17,6 @@
     "paths": {
       "@jest-automation/cucumber": ["packages/cucumber/src/index.ts"],
       "@jest-automation/dto": ["packages/dto/src/index.ts"],
-      "@jest-automation/utilities": ["packages/utilities/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
