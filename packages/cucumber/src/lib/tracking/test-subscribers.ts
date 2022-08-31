@@ -1,33 +1,37 @@
-import {
-  group,
-  ConsoleGroupToken,
-  endGroup,
-} from '../../../modules/logging/custom-console';
+import { endGroup, startGroup } from '@jest-automation/console';
 import Bag from './bag';
+
+enum ConsoleGroupToken {
+  Feature = 'Feature',
+  Scenario = 'Scenario',
+  ScenarioOutline = 'Scenario Outline',
+  Rule = 'Rule',
+  Step = '',
+}
 
 export default class TestTrackingSubscribers {
   readonly featureStarted = new Bag((title: string) =>
-    group(ConsoleGroupToken.FeatureToken, title),
+    startGroup(ConsoleGroupToken.Feature, title)
+  );
+  readonly ruleStarted = new Bag((title: string) =>
+    startGroup(ConsoleGroupToken.Rule, title)
   );
 
-  readonly featureEnded = new Bag(() =>
-    endGroup(ConsoleGroupToken.FeatureToken),
-  );
+  readonly featureEnded = new Bag(() => endGroup(ConsoleGroupToken.Feature));
+  readonly ruleEnded = new Bag(() => endGroup(ConsoleGroupToken.Rule));
   readonly scenarioOutlineStarted = new Bag((title: string) =>
-    group(ConsoleGroupToken.ScenarioOutlineToken, title),
+    startGroup(ConsoleGroupToken.ScenarioOutline, title)
   );
   readonly scenarioOutlineEnded = new Bag(() =>
-    endGroup(ConsoleGroupToken.ScenarioOutlineToken),
+    endGroup(ConsoleGroupToken.ScenarioOutline)
   );
   readonly scenarioStarted = new Bag((title: string) =>
-    group(ConsoleGroupToken.ScenarioToken, title),
+    startGroup(ConsoleGroupToken.Scenario, title)
   );
-  readonly scenarioEnded = new Bag(() =>
-    endGroup(ConsoleGroupToken.ScenarioToken),
-  );
+  readonly scenarioEnded = new Bag(() => endGroup(ConsoleGroupToken.Scenario));
   readonly stepStarted = new Bag(
-    (keyword: string, sentence: string, ..._: any[]) =>
-      group(ConsoleGroupToken.StepToken, keyword, sentence),
+    (keyword: string, sentence: string, ..._: unknown[]) =>
+      startGroup(ConsoleGroupToken.Step, keyword, sentence)
   );
-  readonly stepEnded = new Bag(() => endGroup(ConsoleGroupToken.StepToken));
+  readonly stepEnded = new Bag(() => endGroup(ConsoleGroupToken.Step));
 }

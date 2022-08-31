@@ -1,4 +1,4 @@
-import { GherkinFeature } from './gherkin-objects';
+import { GherkinFeature } from './parsing/gherkin-objects';
 import Scenario from './scenario';
 import { TestGroup } from './test-group';
 import TestTrackingEvents from './tracking/test-tracker';
@@ -40,7 +40,7 @@ export class TopLevelRun extends TestGroup {
     });
   }
 
-  execute(testFn: jest.It) {
+  execute(testFn: It) {
     for (const scenario of this.scenarios) {
       scenario.loadDefinedSteps(...this.#steps);
       this.callbacks.forEach((callback) => {
@@ -52,7 +52,7 @@ export class TopLevelRun extends TestGroup {
     }).length;
   }
 
-  protected _findMatch = (..._: any[]) => {
+  protected _findMatch = (..._: unknown[]) => {
     throw new Error(
       'TopLevelRun should not search for a match. Use a scenario. Also you should never see this.',
     );

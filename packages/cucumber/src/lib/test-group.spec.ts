@@ -3,7 +3,7 @@ import { PreparedStepCallback, ScenarioInnerCallback, StepData } from './types';
 
 describe('TestGroup', () => {
   class Impl extends TestGroup {
-    loadDefinedSteps(...callbacks: ScenarioInnerCallback[]): void {
+    loadDefinedSteps(..._: ScenarioInnerCallback[]): void {
       throw new Error('Method not implemented.');
     }
     protected _findMatch = jest.fn(

@@ -1,6 +1,6 @@
 type TagFilter = (tags: string[]) => boolean;
-export function matchesFilter(filter: string, tags: string[]) {
-  const tagRegex = /(\@[A-Za-z-_0-9]+)/g;
+export function matchesFilter(filter: string | undefined, tags: string[]): boolean {
+  const tagRegex = /(@[A-Za-z-_0-9]+)/g;
   const matchedTags: string[] = [];
   let alteredExpression = filter + '';
   let match: RegExpMatchArray | null = null;
@@ -11,7 +11,7 @@ export function matchesFilter(filter: string, tags: string[]) {
     if (match) {
       alteredExpression = alteredExpression.replace(
         matchedSubstring,
-        `(tags.indexOf("${match[1].toLowerCase()}")!==-1)`,
+        `(tags.indexOf("${match[1].toLowerCase()}")!==-1)`
       );
       if (matchedTags.includes(matchedSubstring)) {
         matchedTags.push(matchedSubstring);
@@ -26,16 +26,16 @@ export function matchesFilter(filter: string, tags: string[]) {
   alteredExpression = alteredExpression.replace(orRegex, ' || ');
   alteredExpression = alteredExpression.replace(andRegex, ' && ');
   alteredExpression = alteredExpression.replace(whiteSpaceRegex, '');
-  let filterFunction: Function | null = null;
+  let filterFunction: (...args: unknown[]) => boolean | null = null;
   try {
     filterFunction = new Function(
       'tags',
-      `return ${alteredExpression};`,
+      `return ${alteredExpression};`
     ) as TagFilter;
     // run empty to verify valid function string
     filterFunction([]);
   } catch (error) {
     throw new Error(`Unable to parse tag filter '${filter}'`);
   }
-  return filterFunction(tags);
+  return filterFunction(tags) ;
 }

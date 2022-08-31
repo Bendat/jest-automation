@@ -4,16 +4,6 @@ import Scenario from './scenario';
 import TestTrackingSubscribers from './tracking/test-subscribers';
 import TestTrackingEvents from './tracking/test-tracker';
 import { ScenarioCallbackObject } from './types';
-jest.mock('./tracking/test-tracker', () => {
-  return jest.fn().mockImplementation(() => {
-    return {
-      scenarioStarted: jest.fn(),
-      scenarioEnded: jest.fn(),
-      stepStarted: jest.fn(),
-      stepEnded: jest.fn(),
-    };
-  });
-});
 
 describe('scenario', () => {
   describe('execute', () => {
@@ -22,9 +12,14 @@ describe('scenario', () => {
       expect(title).toBe('Scenario: test');
       await action();
     });
+    afterEach(() => {
+      jestItMock.mockClear();
+    });
     it('should do nothing when executed without steps', async () => {
       const subscribers = new TestTrackingSubscribers();
       const events = new TestTrackingEvents(subscribers);
+      const spy = jest.spyOn(events, 'scenarioStarted');
+
       const scenario = new GherkinScenario('test', [], undefined, []);
       const sut = new Scenario('test', scenario, [], [], events);
 
@@ -32,7 +27,7 @@ describe('scenario', () => {
       expect(jestItMock).toBeCalledTimes(1);
       // When the test function is called, a scenario
       // started event will execute.
-      expect(events.scenarioStarted).toBeCalledTimes(1);
+      expect(spy).toBeCalledTimes(1);
       expect.assertions(3);
     });
     const step = {
@@ -44,6 +39,7 @@ describe('scenario', () => {
       it('should run background steps', () => {
         const subscribers = new TestTrackingSubscribers();
         const events = new TestTrackingEvents(subscribers);
+
         const scenario = new GherkinScenario('test', [], undefined, []);
         const innerCbMockFn = jest.fn();
         const cb = ({ Given }: ScenarioCallbackObject) => {
@@ -56,7 +52,7 @@ describe('scenario', () => {
           scenario,
           [background],
           [rawBackground],
-          events,
+          events
         );
         sut.execute(jestItMock as unknown as jest.It);
         expect(jestItMock).toBeCalledTimes(1);
@@ -82,7 +78,7 @@ describe('scenario', () => {
         const background = new Background('', cb);
 
         const sut = new Scenario('test', scenario, [background], [], events);
-        const testFn = (_: string, fn: any) => {
+        const testFn = (_: string, fn: (...args: unknown[]) => unknown) => {
           testExecuted = true;
           return fn();
         };
@@ -107,7 +103,7 @@ describe('scenario', () => {
         Given('a test', () => {
           stepExecuted = true;
         });
-        const testFn = (_: string, fn: any) => {
+        const testFn = (_: string, fn: () => void) => {
           testExecuted = true;
           return fn();
         };

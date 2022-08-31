@@ -1,14 +1,9 @@
-import { Appendable } from '@utilities/data-utilities';
-import { GherkinStep } from './gherkin-objects';
+import { GherkinStep } from './parsing/gherkin-objects';
 import {
   PreparedStepCallback,
   PreparedStepData,
   PreparedStepGroup,
-  PreparedSteps,
-  ScenarioSteps,
 } from './types';
-
-const steps: PreparedSteps = new ScenarioSteps();
 
 class StepCache {
   Given: PreparedStepData[] = [];
@@ -16,11 +11,11 @@ class StepCache {
   Then: PreparedStepData[] = [];
 
   FindStep = (groupName: string, step: GherkinStep) => {
-    const group = (this as unknown as Appendable)[
+    const group = (this as unknown as Record<string, unknown>)[
       groupName
     ] as unknown as PreparedStepGroup[];
     group.forEach(({ __keyword__: _, ...stepData }) => {
-        // make special case for and/but - should map to when/then
+      // make special case for and/but - should map to when/then
       for (const data in stepData) {
         const loadedStep = stepData[data];
         if (loadedStep.regex) {
@@ -32,7 +27,7 @@ class StepCache {
       }
       for (const data in stepData) {
         const loadedStep = stepData[data];
-        const { text, regex } = loadedStep;
+        const { regex } = loadedStep;
         if (!regex) {
           continue;
         }
@@ -45,9 +40,9 @@ class StepCache {
   };
 }
 
-const  globalCache = new StepCache();
+const globalCache = new StepCache();
 
-function Given(stepString: string | RegExp, action: PreparedStepCallback) {
+export function Given(stepString: string | RegExp, action: PreparedStepCallback) {
   let text: string;
   let regex: RegExp | undefined;
   if (stepString instanceof RegExp) {
@@ -64,5 +59,3 @@ function Given(stepString: string | RegExp, action: PreparedStepCallback) {
   globalCache.Given.push(step);
 }
 
-Given('', ()=>{}
-)

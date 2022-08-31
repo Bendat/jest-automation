@@ -10,6 +10,11 @@ export default class TestTrackingEvents {
     alertSubscribers(this.#subscribers.featureStarted, title);
 
   featureEnded = () => alertSubscribers(this.#subscribers.featureEnded);
+ 
+  ruleStarted = (title: string) =>
+    alertSubscribers(this.#subscribers.ruleStarted, title);
+
+  ruleEnded = () => alertSubscribers(this.#subscribers.ruleEnded);
 
   scenarioOutlineStarted = (title: string | undefined) =>
     alertSubscribers(this.#subscribers.scenarioOutlineStarted, title);
@@ -22,12 +27,15 @@ export default class TestTrackingEvents {
 
   scenarioEnded = () => alertSubscribers(this.#subscribers.scenarioEnded);
 
-  stepStarted = (keyword: string, sentence: string, ..._: any[]) =>
+  stepStarted = (keyword: string, sentence: string, ..._: unknown[]) =>
     alertSubscribers(this.#subscribers.stepStarted, keyword, sentence);
 
   stepEnded = () => alertSubscribers(this.#subscribers.stepEnded);
 }
 
-function alertSubscribers(subscribers: Bag, ...args: any) {
+function alertSubscribers(
+  subscribers: Bag,
+  ...args: unknown[]
+) {
   subscribers.forEach((it) => it(...args));
 }

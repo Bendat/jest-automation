@@ -1,5 +1,6 @@
 import Background from './background';
 import { GherkinTestValidationError } from './errors/validation-errors';
+import { findMatchingExpression, getExpressionVariables } from './expressions';
 import {
   GherkinBackground,
   GherkinScenario,
@@ -16,39 +17,38 @@ import {
 import { throwErrorIfNoMatch } from './utils';
 
 export default class Scenario extends TestGroup {
-  #parsedScenario: GherkinScenario;
-  #parsedBackgrounds: GherkinBackground[];
   #events: TestTrackingEvents;
 
   constructor(
-    title: string | undefined,
-    parsedScenario: GherkinScenario,
+    public readonly title: string | undefined,
+    public readonly parsedScenario: GherkinScenario,
     public readonly backgrounds: Background[] = [],
-    parsedackgrounds: GherkinBackground[] = [],
-    events: TestTrackingEvents,
+    public readonly parsedBackgrounds: GherkinBackground[] = [],
+    events: TestTrackingEvents
   ) {
     super(title);
-    this.#parsedScenario = parsedScenario;
-    this.#parsedBackgrounds = parsedackgrounds;
     this.#events = events;
   }
 
-  execute(testFunction: jest.It): void | Promise<void> {
-    const scenario = this.#parsedScenario;
+  execute(testFunction: It, isSkipped = false): void | Promise<void> {
+    const scenario = this.parsedScenario;
     this.#loadBackgroundSteps();
     return testFunction(
       'Scenario: ' + scenario.title ?? 'Untitled Scenario',
       async () => {
+        if (isSkipped) {
+          return;
+        }
         this.#events.scenarioStarted(this.title);
         try {
           await this.#runBackgroundSteps();
           await this.#runScenarioSteps();
         } catch (err) {
-          throw err;
+          throw new Error(`Scenario ${this.title} Failed with error \n ${err}`);
         } finally {
           this.#events.scenarioEnded();
         }
-      },
+      }
     );
   }
 
@@ -63,7 +63,7 @@ export default class Scenario extends TestGroup {
   protected _findMatch = (
     regex: RegExp,
     group: string,
-    callback: PreparedStepCallback,
+    callback: PreparedStepCallback
   ) => {
     const backgroundMatch = this.#checkBackgrounds(regex, group, callback);
     if (backgroundMatch) {
@@ -82,9 +82,9 @@ export default class Scenario extends TestGroup {
   #checkBackgrounds(
     regex: RegExp,
     group: string,
-    callback: PreparedStepCallback,
+    callback: PreparedStepCallback
   ) {
-    const bg = this.#parsedBackgrounds;
+    const bg = this.parsedBackgrounds;
     for (const { steps } of bg) {
       for (const parsedStep in steps) {
         const { text, keyword } = steps[parsedStep];
@@ -99,7 +99,7 @@ export default class Scenario extends TestGroup {
   }
 
   #stepsMatch(regex: RegExp, group: string, callback: PreparedStepCallback) {
-    for (const { text, keyword } of this.#parsedScenario.steps) {
+    for (const { text, keyword } of this.parsedScenario.steps) {
       if (regex.test(text)) {
         if (keyword !== group) {
           continue;
@@ -110,7 +110,7 @@ export default class Scenario extends TestGroup {
   }
 
   async #runBackgroundSteps() {
-    for (const { steps } of this.#parsedBackgrounds) {
+    for (const { steps } of this.parsedBackgrounds) {
       for (const parsedStep in steps) {
         await this.#runStep(steps[parsedStep]);
       }
@@ -118,33 +118,57 @@ export default class Scenario extends TestGroup {
   }
 
   async #runScenarioSteps() {
-    for (const step of this.#parsedScenario.steps) {
+    for (const step of this.parsedScenario.steps) {
       await this.#runStep(step);
     }
   }
 
   async #runStep(step: GherkinStep): Promise<void> {
-    const { keyword, text, variables, table } = step;
+    const { keyword, text, variables } = step;
     let matchingStep = this._steps[keyword][text];
-    if (!matchingStep) {
-      throw new GherkinTestValidationError(
-        `Could not find a matching step definition implementation for '${keyword} ${text}'`,
-      );
-    }
+    let actualVars = variables;
+    ({ matchingStep, actualVars } = this.tryMatchExpression(
+      matchingStep,
+      keyword,
+      text,
+      actualVars
+    ));
     this.#events.stepStarted(keyword, text, variables);
     try {
-      await this.#executeStepCallback(matchingStep, variables, step);
+      await this.#executeStepCallback(matchingStep, actualVars, step);
     } catch (err) {
-      throw err;
+      throw new Error(`Failed to run step '${keyword} ${text}. \n ${err}`);
     } finally {
       this.#events.stepEnded();
     }
   }
 
+  private tryMatchExpression(
+    matchingStep: PreparedStepData,
+    keyword: string,
+    text: string,
+    actualVars: string[]
+  ) {
+    if (!matchingStep) {
+      const group = this._steps[keyword];
+      const matchingExpression = findMatchingExpression(text, group);
+      if (!matchingExpression) {
+        throw new GherkinTestValidationError(
+          `Could not find a matching step definition implementation for '${keyword} ${text}'`
+        );
+      }
+      const { variables: expressionVariables } =
+        getExpressionVariables(matchingExpression);
+      actualVars = expressionVariables;
+      matchingStep = group[matchingExpression.expression];
+    }
+    return { matchingStep, actualVars };
+  }
+
   async #executeStepCallback(
     matchingStep: PreparedStepData,
     variables: string[],
-    { text, keyword, table }: GherkinStep,
+    { text, keyword, table }: GherkinStep
   ) {
     const { regex } = matchingStep;
     let args = [...variables];

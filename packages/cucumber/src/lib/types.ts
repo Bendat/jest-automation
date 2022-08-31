@@ -1,9 +1,19 @@
-import {Builder, Property} from '@jest-automation/dto' 
+import { GherkinTable } from './parsing/gherkin-objects';
+
 export type StepCallbackProvider = (
   text: string | RegExp,
-  callback: PreparedStepCallback,
+  callback: PreparedStepCallback
 ) => void;
-export type PreparedStepCallback = (...args: any) => void | Promise<void>;
+
+export type PreparedStepCallback = (
+  ...args: (
+    | string
+    | number
+    | Record<string, unknown>
+    | GherkinTable
+    | unknown
+  )[]
+) => void | Promise<void>;
 
 export interface PreparedStepData {
   text?: string;
@@ -33,7 +43,7 @@ export class StepData implements PreparedStepData {
   constructor(
     public text: string,
     public regex: RegExp | undefined,
-    public action: PreparedStepCallback,
+    public action: PreparedStepCallback
   ) {}
 }
 
@@ -60,30 +70,41 @@ export interface ScenarioCallbackObject {
 }
 
 export type ScenarioInnerCallback = (
-  callbacks: ScenarioCallbackObject,
+  callbacks: ScenarioCallbackObject
 ) => void | Promise<void>;
 
 export type ScenarioCallback = (
   title: string,
-  callbacks: ScenarioInnerCallback,
+  callbacks: ScenarioInnerCallback
 ) => void | Promise<void>;
 
 export type BackgroundCallbackObject = ScenarioCallbackObject;
 
 export type BackgroundInnerCallback = (
-  callbacks: BackgroundCallbackObject,
+  callbacks: BackgroundCallbackObject
 ) => void | Promise<void>;
 
 export type BackgroundCallback = (
   title: string | undefined | ScenarioInnerCallback,
-  callbacks?: ScenarioInnerCallback,
+  callbacks?: ScenarioInnerCallback
 ) => void | Promise<void>;
 
-export interface FeatureCallbackObject {
+export interface CategoryCallbackObject {
   Scenario: ScenarioCallback;
   ScenarioOutline: ScenarioCallback;
   Background: BackgroundCallback;
+}
+
+export type RuleCallback = (
+  title: string,
+  actions: (obj: CategoryCallbackObject) => void
+) => void;
+
+export type RuleInnerCallback = (actions: CategoryCallbackObject) => void;
+
+export interface FeatureCallbackObject extends CategoryCallbackObject {
   All: (...steps: ScenarioInnerCallback[]) => void;
+  Rule: RuleCallback;
 }
 
 export type FeatureCallback = (callbacks: FeatureCallbackObject) => void;

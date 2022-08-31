@@ -1,5 +1,8 @@
 import Background from './background';
-import { GherkinBackground, GherkinScenarioOutline } from './parsing/gherkin-objects';
+import {
+  GherkinBackground,
+  GherkinScenarioOutline,
+} from './parsing/gherkin-objects';
 import Scenario from './scenario';
 import TestTrackingEvents from './tracking/test-tracker';
 import { ScenarioInnerCallback } from './types';
@@ -16,7 +19,7 @@ export default class ScenarioOutline {
     parsedScenarioOutline: GherkinScenarioOutline,
     backgrounds: Background[],
     parsedBackgrounds: GherkinBackground[] = [],
-    events: TestTrackingEvents,
+    events: TestTrackingEvents
   ) {
     this.#parsedScenarioOutline = parsedScenarioOutline;
     this.#backgrounds = backgrounds;
@@ -33,13 +36,17 @@ export default class ScenarioOutline {
     }
   }
 
-  execute(group: jest.Describe, testFn: jest.It, after = afterAll) {
+  execute(group: Describe, testFn: It, isSkipped = false, after = afterAll, before = beforeAll) {
     group(`Scenario Outline: ${this.title}`, () => {
-      this.#events.scenarioOutlineStarted(this.title);
-      after(() => {
-        this.#events.scenarioOutlineEnded();
-      });
-      console.log(this.#scenarios)
+      if (!isSkipped) {
+        before(()=>{
+          this.#events.scenarioOutlineStarted(this.title);
+        })
+        after(() => {
+          this.#events.scenarioOutlineEnded();
+        });
+      }
+
       this.#scenarios.map((scenario) => {
         scenario.execute(testFn);
       });
@@ -52,7 +59,7 @@ export default class ScenarioOutline {
     scenarios
       .map(
         (it) =>
-          new Scenario(it.title ?? '', it, this.#backgrounds, bg, this.#events),
+          new Scenario(it.title ?? '', it, this.#backgrounds, bg, this.#events)
       )
       .forEach((it) => this.#scenarios.push(it));
   }

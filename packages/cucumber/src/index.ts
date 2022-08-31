@@ -1,1 +1,2 @@
-export * from './lib/cucumber';
+export * from './lib/';
+export * from './setup'

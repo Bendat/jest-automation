@@ -1,4 +1,4 @@
-import { EMPTY_STRING } from '../../utilities/data-utilities';
+import { EMPTY_STRING } from '@jest-automation/shared-utilities';
 import { parseCucumber } from './parser';
 const bareFeature = `Feature:`;
 const bareFeatureWithName = `Feature: A feature with no scenarios`;
@@ -205,10 +205,8 @@ describe('parseCucumber', () => {
       );
       const { outlines } = feature;
       const [outline] = outlines;
-      const { examples, steps } = outline;
+      const { examples } = outline;
       const [first, second] = examples;
-      const [firstStep] = steps;
-      // const { variables } = firstStep;
       const expectedFirst = {
         headers: ['foo', 'bar'],
         values: [
@@ -220,10 +218,8 @@ describe('parseCucumber', () => {
         headers: ['foo', 'bar'],
         values: [['aa', 'bb']],
       };
-      const expectedVariables = ['foo', 'bar'];
       expect(first).toStrictEqual(expectedFirst);
       expect(second).toStrictEqual(expectedSecond);
-      // expect(variables).toStrictEqual(expectedVariables);
     });
   });
 
@@ -232,7 +228,7 @@ describe('parseCucumber', () => {
       const { feature } = parseCucumber(featureWithRuleWithScenario);
       const { rules } = feature;
       const [first] = rules;
-      const { name: ruleName, scenarios } = first;
+      const { title: ruleName, scenarios } = first;
       const [scenario] = scenarios;
       const { title, steps } = scenario;
       const [given] = steps;
@@ -247,7 +243,7 @@ describe('parseCucumber', () => {
       const { feature } = parseCucumber(featureWithRuleWithBackground);
       const { rules } = feature;
       const [first] = rules;
-      const { name: ruleName, backgrounds } = first;
+      const { title: ruleName, backgrounds } = first;
       const [background] = backgrounds;
       const { title: name, steps } = background;
       const [given] = steps;
@@ -266,7 +262,7 @@ describe('parseCucumber', () => {
       const { title: bgName, steps: bgSteps } = featureBackground;
       const [bgGiven] = bgSteps;
       const [first] = rules;
-      const { name: ruleName, backgrounds } = first;
+      const { title: ruleName, backgrounds } = first;
       const [background] = backgrounds;
       const { title: name, steps } = background;
       const [given] = steps;

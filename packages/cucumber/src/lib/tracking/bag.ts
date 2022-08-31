@@ -1,6 +1,7 @@
+type StandardFunction = (...args: unknown[]) => void
 export default class Bag {
-  #innerArray: ((...args: any) => void)[] = [];
-  constructor(...defaultCallbacks: ((...args: any) => void)[]) {
+  #innerArray: ((...args: StandardFunction[]) => void)[] = [];
+  constructor(...defaultCallbacks: (StandardFunction)[]) {
     defaultCallbacks.forEach(this.subscribe);
   }
 
@@ -8,11 +9,11 @@ export default class Bag {
     this.#innerArray.push(callback);
   };
 
-  forEach = (action: (...args: any) => void) => {
+  forEach = (action: (...args: StandardFunction[]) => void) => {
     this.#innerArray.forEach((it) => {
       action(it);
     });
   };
 }
 
-type TrackingCallback = (...args: any) => void;
+type TrackingCallback = (...args: unknown[]) => void;

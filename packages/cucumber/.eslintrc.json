@@ -3,6 +3,13 @@
   "ignorePatterns": ["!**/*"],
   "overrides": [
     {
+      "files": ["*.ts"],
+      "extends": [
+        "plugin:@nrwl/nx/typescript",
+        "./custom-lint-rules.json"
+      ]
+    },
+    {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {}
     },

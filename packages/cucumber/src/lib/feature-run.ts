@@ -1,121 +1,55 @@
-import Background from './background';
-import {
-  GherkinScenario,
-  GherkinScenarioOutline,
-  GherkinTest,
-} from './parsing/gherkin-objects';
-import Scenario from './scenario';
-import ScenarioOutline from './scenario-outline';
-import { ScenarioInnerCallback } from './types';
-import { GherkinTestValidationError } from './errors/validation-errors';
+import { RuleInnerCallback, ScenarioInnerCallback } from './types';
 import TestTrackingEvents from './tracking/test-tracker';
 import { TopLevelRun } from './top-level-run';
-interface Group<T> {
-  [key: string]: T;
-}
-export class FeatureRun {
-  #test: GherkinTest;
-  #scenarios: Group<Scenario> = {};
-  #outlines: Group<ScenarioOutline> = {};
-  #backgrounds: Background[] = [];
-  #events: TestTrackingEvents;
+import Category from './category';
+import { GherkinTest } from './parsing/gherkin-objects';
+import Rule from './rule';
+
+export default class FeatureRun extends Category {
+
   #run?: TopLevelRun;
   constructor(test: GherkinTest, events: TestTrackingEvents) {
-    this.#test = test;
-    this.#events = events;
+    super(test, test.feature, events);
+  }
+  
+  registerRule(title: string, callback: RuleInnerCallback): void {
+    const rules = this._test.feature.rules;
+    const matching = rules.find((it) => it.title == title);
+    if (!matching) {
+      throw new Error(`Could not find a matching rule for ${title}`);
+    }
+    const rule = new Rule(this._test, matching, callback, this._events);
+    this._rules[title] = rule;
   }
 
-  registerScenario(title: string) {
-    const { feature } = this.#test;
-    const { scenarios, backgrounds } = feature;
-    const search = ({ title: parsed }: GherkinScenario) => parsed === title;
-    const found = scenarios.find(search);
-    if (!found) {
-      throw new GherkinTestValidationError(unknownTitle(title));
-    }
-    const scenario = new Scenario(
-      title,
-      found,
-      this.#backgrounds,
-      backgrounds,
-      this.#events,
-    );
-    this.#scenarios[title] = scenario;
-    return scenario;
-  }
+  getTopLevelRunCallback = (steps: ScenarioInnerCallback) => {
+    this.registerTopLevelRun(steps);
+  };
 
-  registerScenarioOutline(title: string) {
-    const { feature } = this.#test;
-    const { outlines, backgrounds } = feature;
-    const search = ({ title: parsed }: GherkinScenarioOutline) =>
-      parsed === title;
-    const found = outlines.find(search);
-    if (!found) {
-      throw new GherkinTestValidationError(unknownTitle(title));
-    }
-    const scenario = new ScenarioOutline(
-      title,
-      found,
-      this.#backgrounds,
-      backgrounds,
-      this.#events,
-    );
-    this.#outlines[title] = scenario;
-    return scenario;
-  }
+  getRuleCallback = (title: string, rule: RuleInnerCallback) => {
+    this.registerRule(title, rule);
+  };
 
   registerTopLevelRun(steps: ScenarioInnerCallback) {
-    this.#run = new TopLevelRun(this.#test.feature, steps, this.#events);
+    this.#run = new TopLevelRun(this._test.feature, steps, this._events);
     this.#run?.assembleScenarios();
   }
 
-  registerBackground(title: string | undefined, steps: ScenarioInnerCallback) {
-    const background = new Background(title, steps);
-    this.#backgrounds.push(background);
-    return background;
-  }
-
-  execute(testGrouping: jest.Describe) {
-    testGrouping(`Feature: ${this.#test.feature.title}`, () => {
-      const { feature } = this.#test;
-      const { scenarios, outlines } = feature;
+  execute(testGrouping: Describe, testFn?: It) {
+    testGrouping(`Feature: ${this._test.feature.title}`, () => {
+      const { feature } = this._test;
+      const { scenarios, outlines, rules } = feature;
       afterAll(() => {
-        this.#events.featureEnded();
+        this._events.featureEnded();
       });
       if (this.#run?.execute(test)) {
         // don't run other tests if all is specified
         return;
       }
-      this.runScenarios(scenarios);
-      this.runOutlines(outlines);
+      this.runOutlines(outlines, testGrouping, testFn);
+      this.runScenarios(scenarios, testFn);
+      this.runRules(rules);
+      
     });
   }
-
-  private runOutlines(outlines: GherkinScenarioOutline[]) {
-    for (const { title } of outlines) {
-      const matching = this.#outlines[title ?? ''];
-      if (!matching) {
-        throw new GherkinTestValidationError(
-          `Could not find a matching Scenario Outline defined for '${title}'`,
-        );
-      }
-      matching.execute(describe, test);
-    }
-  }
-
-  private runScenarios(scenarios: GherkinScenario[]) {
-    for (const { title } of scenarios) {
-      const matching = this.#scenarios[title ?? ''];
-      if (!matching) {
-        throw new GherkinTestValidationError(
-          `Could not find a matching Scenario defined for '${title}'`,
-        );
-      }
-      const scenarioObject = this.#scenarios[title ?? ''];
-      scenarioObject.execute(test);
-    }
-  }
-}
-function unknownTitle(title: string): string | undefined {
-  return `No scenario found matching title '${title}'`;
 }

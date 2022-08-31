@@ -14,6 +14,7 @@ export class GherkinFeature {
     public readonly rules: GherkinRule[],
     public readonly scenarios: GherkinScenario[],
     public readonly outlines: GherkinScenarioOutline[],
+    public readonly tags: string[]
   ) {}
 }
 
@@ -26,10 +27,11 @@ export class GherkinBackground {
 
 export class GherkinRule {
   public constructor(
-    public readonly name: string,
+    public readonly title: string,
     public readonly backgrounds: GherkinBackground[],
     public readonly scenarios: GherkinScenario[],
     public readonly outlines: GherkinScenarioOutline[],
+    public readonly tags: string[]
   ) {}
 }
 
@@ -48,6 +50,7 @@ export class GherkinScenarioOutline {
     public steps: GherkinStepBlueprints,
     public examples: GherkinExample[],
     public scenarios: GherkinScenario[],
+    public readonly tags: string[],
     public rule?: string,
   ) {}
 }
@@ -60,9 +63,6 @@ export class GherkinStepBluePrint {
   ) {}
 }
 
-interface GherkinVariables {
-  [name: string]: string;
-}
 export class GherkinStep {
   constructor(
     public readonly keyword: string,

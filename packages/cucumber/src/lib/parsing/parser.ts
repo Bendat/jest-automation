@@ -1,16 +1,11 @@
-// import assembler from 'gherking'
 import {
   AstBuilder,
   GherkinClassicTokenMatcher,
   Parser,
-  compile,
 } from '@cucumber/gherkin';
 import {
-  Background,
-  DataTable,
   Examples,
   Feature,
-  FeatureChild,
   GherkinDocument,
   IdGenerator,
   Rule,
@@ -29,7 +24,7 @@ import {
   GherkinTable,
   GherkinTest,
 } from './gherkin-objects';
-import { notEmpty } from '@jest-automation/utilities';
+import { notEmpty } from '@jest-automation/shared-utilities';
 const uuidFn = IdGenerator.uuid();
 const builder = new AstBuilder(uuidFn);
 const matcher = new GherkinClassicTokenMatcher(); // or Gherkin.GherkinInMarkdownTokenMatcher()
@@ -53,7 +48,7 @@ function parseGherkinTest(doc: GherkinDocument): GherkinTest {
   const outlines: GherkinScenarioOutline[] =
     parseGherkinScenarioOutlines(feature);
   const rules = parseGherkinRules(feature);
-
+  const tagStrings = tags.map((it) => it.name);
   return {
     language,
     feature: {
@@ -62,11 +57,15 @@ function parseGherkinTest(doc: GherkinDocument): GherkinTest {
       scenarios,
       outlines,
       rules,
+      tags: tagStrings,
     },
   };
 }
 
-function parseGherkinRules({ children }: Feature): GherkinRule[] {
+function parseGherkinRules({
+  children,
+  tags: featureTags,
+}: Feature): GherkinRule[] {
   if (!children) {
     return [];
   }
@@ -75,16 +74,20 @@ function parseGherkinRules({ children }: Feature): GherkinRule[] {
     .filter(notEmpty)
     .filter(isRule)
     .map((rule) => {
-      const { name } = rule;
+      const { name, tags } = rule;
       const backgrounds: GherkinBackground[] = parseGherkinBackgrounds(rule);
       const scenarios: GherkinScenario[] = parseGherkinScenarios(rule);
       const outlines: GherkinScenarioOutline[] =
         parseGherkinScenarioOutlines(rule);
       return {
-        name,
+        title: name,
         backgrounds,
         scenarios,
         outlines,
+        tags: [
+          ...featureTags.map((it) => it.name),
+          ...tags.map((it) => it.name),
+        ],
       };
     });
 }
@@ -146,7 +149,8 @@ function makeScenarioOutline(
     name,
     parsedSteps,
     parsedExamples,
-    scenarios
+    scenarios,
+    tags
   );
 }
 
@@ -208,9 +212,9 @@ function extractVariablesForScenario(
   keyword: string,
   table: GherkinTable | undefined
 ) {
-  const regex = /\<[^\s<>](?:[^<>]*[^\s<>])?\>/g;
+  const regex = /<[^\s<>](?:[^<>]*[^\s<>])?>/g;
   const variables =
-    originalText.match(regex)?.map((it) => it.replace(/[\<\>']+/g, '')) ?? [];
+    originalText.match(regex)?.map((it) => it.replace(/[<>']+/g, '')) ?? [];
   for (let i = 0; i < headers.length; i++) {
     const header = headers[i];
     const variable = row[i];
