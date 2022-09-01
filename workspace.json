@@ -3,7 +3,10 @@
   "version": 2,
   "projects": {
     "console": "packages/console",
+    "cucumber": "packages/cucumber",
     "dto": "packages/dto",
+    "e2e": "packages/e2e",
+    "jest-automation": "packages/jest-automation",
     "shared-utilities": "packages/shared-utilities"
   }
 }

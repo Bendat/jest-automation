@@ -68,25 +68,26 @@ function formatColor(color: StyleFunction, prepad: number, ...args: unknown[]) {
   return color(asString).replace(/^/gm, prefix + prepadding);
 }
 
-type Stream = (
-  buffer: string | Uint8Array,
-  cb?: ((err?: Error | undefined) => void) | undefined
-) => boolean;
-
-function writeToStream(
-  stream: Stream,
-  name: string,
-  color: StyleFunction,
-  ...args: unknown[]
-) {
+function writeToStream(name: string, color: StyleFunction, ...args: unknown[]) {
   const { framesToSkip } = getFramesToSkip();
   const { line, char, file } = getCurrentLine(framesToSkip);
   const callerString = bold(`${file}:${line}:${char}`);
   const newLine = (arg: string) => `${arg}\n`;
-  stream(newLine(formatColor(color, 1, bold(`[${name}]`))));
-  stream(newLine(formatColor(color, 1, ...args)));
-  stream(newLine(formatColor(color, 1, callerString)));
-  stream(newLine(format('')));
+  process.stdout.write(newLine(formatColor(color, 1, bold(`[${name}]`))));
+  process.stdout.write(newLine(formatColor(color, 1, ...args)));
+  process.stdout.write(newLine(formatColor(color, 1, callerString)));
+  process.stdout.write(newLine(format('')));
+}
+
+function writeToErr(name: string, color: StyleFunction, ...args: unknown[]) {
+  const { framesToSkip } = getFramesToSkip();
+  const { line, char, file } = getCurrentLine(framesToSkip);
+  const callerString = bold(`${file}:${line}:${char}`);
+  const newLine = (arg: string) => `${arg}\n`;
+  process.stderr.write(newLine(formatColor(color, 1, bold(`[${name}]`))));
+  process.stderr.write(newLine(formatColor(color, 1, ...args)));
+  process.stderr.write(newLine(formatColor(color, 1, callerString)));
+  process.stderr.write(newLine(format('')));
 }
 
 function getFramesToSkip() {
@@ -102,23 +103,27 @@ function getFramesToSkip() {
 }
 
 function consoleLog(...args: unknown[]) {
-  writeToStream(process.stdout.write, 'Log', white, ...args);
+  writeToStream('Log', white, ...args);
 }
 
 function consoleError(...args: unknown[]) {
-  writeToStream(process.stderr.write, 'Error', red, ...args);
+  writeToErr('Error', red, ...args);
 }
+
 function consoleWarn(...args: unknown[]) {
-  writeToStream(process.stderr.write, 'Warn', yellow, ...args);
+  writeToErr('Warn', yellow, ...args);
 }
+
 function consoleInfo(...args: unknown[]) {
-  writeToStream(process.stdout.write, 'Info', blackBright, ...args);
+  writeToStream('Info', blackBright, ...args);
 }
+
 function consoleGroup(...args: string[]) {
   const { prefix: themePrefix, titlePrefix, spacing } = theme;
   process.stdout.write(
     '\u001b[1m' + format(titlePrefix + args.join(' ')) + '\u001b[22m\n'
   );
+
   prefix += themePrefix + ' '.repeat(spacing);
 }
 

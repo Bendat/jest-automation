@@ -8,15 +8,17 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2022",
-    "module": "esnext",
+    "target": "ES2022",
+    "module": "ES2022",
     "lib": ["es2022", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@jest-automation/console": ["packages/console/src/index.ts"],
+      "@jest-automation/cucumber": ["packages/cucumber/src/index.ts"],
       "@jest-automation/dto": ["packages/dto/src/index.ts"],
+      "@jest-automation/e2e": ["packages/e2e/src/index.ts"],
       "@jest-automation/shared-utilities": [
         "packages/shared-utilities/src/index.ts"
       ]
