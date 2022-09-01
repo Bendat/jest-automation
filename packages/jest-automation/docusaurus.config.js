@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Jest-Automation Docs',
-  url: 'bendat.github.io',
+  url: 'https://bendat.github.io/',
   baseUrl: '/jest-automation/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
