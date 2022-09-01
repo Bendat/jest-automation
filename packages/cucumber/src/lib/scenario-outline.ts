@@ -6,6 +6,8 @@ import {
 import Scenario from './scenario';
 import TestTrackingEvents from './tracking/test-tracker';
 import { ScenarioInnerCallback } from './types';
+import {afterAll, beforeAll } from '@jest/globals';
+import {Global} from '@jest/types'
 
 export default class ScenarioOutline {
   #parsedScenarioOutline: GherkinScenarioOutline;
@@ -36,7 +38,7 @@ export default class ScenarioOutline {
     }
   }
 
-  execute(group: Describe, testFn: It, isSkipped = false, after = afterAll, before = beforeAll) {
+  execute(group: Global.DescribeBase, testFn: Global.ItBase, isSkipped = false, after = afterAll, before = beforeAll) {
     group(`Scenario Outline: ${this.title}`, () => {
       if (!isSkipped) {
         before(()=>{

@@ -4,6 +4,8 @@ import { TopLevelRun } from './top-level-run';
 import Category from './category';
 import { GherkinTest } from './parsing/gherkin-objects';
 import Rule from './rule';
+import { afterAll, test, } from '@jest/globals';
+import type { Global } from '@jest/types';
 
 export default class FeatureRun extends Category {
 
@@ -31,18 +33,20 @@ export default class FeatureRun extends Category {
   };
 
   registerTopLevelRun(steps: ScenarioInnerCallback) {
-    this.#run = new TopLevelRun(this._test.feature, steps, this._events);
+    this.#run = new TopLevelRun(this._test, steps, this._events);
     this.#run?.assembleScenarios();
+    this.#run.assembleScenarioOutlines();
+    this.#run.assembleScenarioRules();
   }
 
-  execute(testGrouping: Describe, testFn?: It) {
+  execute(testGrouping: Global.DescribeBase, testFn?: Global.ItBase) {
     testGrouping(`Feature: ${this._test.feature.title}`, () => {
       const { feature } = this._test;
       const { scenarios, outlines, rules } = feature;
       afterAll(() => {
         this._events.featureEnded();
       });
-      if (this.#run?.execute(test)) {
+      if (this.#run?.execute(testGrouping, test)) {
         // don't run other tests if all is specified
         return;
       }

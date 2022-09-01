@@ -8,10 +8,9 @@ export type StepCallbackProvider = (
 export type PreparedStepCallback = (
   ...args: (
     | string
-    | number
-    | Record<string, unknown>
     | GherkinTable
-    | unknown
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    | any
   )[]
 ) => void | Promise<void>;
 
@@ -69,9 +68,9 @@ export interface ScenarioCallbackObject {
   Shared: (...steps: ScenarioInnerCallback[]) => void;
 }
 
-export type ScenarioInnerCallback = (
-  callbacks: ScenarioCallbackObject
-) => void | Promise<void>;
+export interface ScenarioInnerCallback{
+  (callbacks: ScenarioCallbackObject): void | Promise<void>
+}
 
 export type ScenarioCallback = (
   title: string,
@@ -100,7 +99,7 @@ export type RuleCallback = (
   actions: (obj: CategoryCallbackObject) => void
 ) => void;
 
-export type RuleInnerCallback = (actions: CategoryCallbackObject) => void;
+export type RuleInnerCallback = (callbacks: CategoryCallbackObject) => void;
 
 export interface FeatureCallbackObject extends CategoryCallbackObject {
   All: (...steps: ScenarioInnerCallback[]) => void;

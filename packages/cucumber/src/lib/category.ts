@@ -13,6 +13,8 @@ import ScenarioOutline from './scenario-outline';
 import { matchesFilter } from './tag-filtering';
 import TestTrackingEvents from './tracking/test-tracker';
 import { ScenarioInnerCallback } from './types';
+import { test, describe } from '@jest/globals';
+import { Global } from '@jest/types';
 
 interface Group<T> {
   [key: string]: T;
@@ -43,13 +45,12 @@ export default abstract class Category {
     return background;
   }
 
-
   registerScenario(title: string) {
     const { scenarios, backgrounds } = this._base;
     const search = ({ title: parsed }: GherkinScenario) => parsed === title;
     const found = scenarios.find(search);
     if (!found) {
-      throw new GherkinTestValidationError(unknownTitle(title));
+      throw new GherkinTestValidationError(this._unknownTitle(title));
     }
     const scenario = new Scenario(
       title,
@@ -62,15 +63,14 @@ export default abstract class Category {
     return scenario;
   }
 
-  abstract execute(testGrouping: Describe, ...args: unknown[]): void;
-
+  abstract execute(testGrouping: Global.DescribeBase, ...args: unknown[]): void;
   registerScenarioOutline(title: string) {
     const { outlines, backgrounds } = this._base;
     const search = ({ title: parsed }: GherkinScenarioOutline) =>
       parsed === title;
     const found = outlines.find(search);
     if (!found) {
-      throw new GherkinTestValidationError(unknownTitle(title));
+      throw new GherkinTestValidationError(this._unknownTitle(title));
     }
     const scenario = new ScenarioOutline(
       title,
@@ -110,8 +110,8 @@ export default abstract class Category {
 
   protected runOutlines(
     outlines: GherkinScenarioOutline[],
-    groupFn?: Describe,
-    testFn?: It
+    groupFn?: Global.DescribeBase,
+    testFn?: Global.ItBase
   ) {
     for (const { title, tags } of outlines) {
       const matching = this._outlines[title ?? ''];
@@ -121,13 +121,17 @@ export default abstract class Category {
         );
       }
       const matches = matchesFilter(Env.filterQuery, tags);
-      const realGroup = groupFn ?? getGroupFunction(matches);
-      const realTest = testFn ?? getTestFunction(matches);
-      matching.execute(realGroup, realTest, isSkipped(matches));
+      const realGroup = groupFn ?? this._getGroupFunction(matches);
+      const realTest = testFn ?? this._getTestFunction(matches);
+      matching.execute(realGroup, realTest, this._isSkipped(matches));
     }
   }
 
-  protected runRules(rules: GherkinRule[], groupFn?: Describe, testFn?: It) {
+  protected runRules(
+    rules: GherkinRule[],
+    groupFn?: Global.DescribeBase,
+    testFn?: Global.ItBase
+  ) {
     for (const { title, tags } of rules) {
       const matching = this._rules[title ?? ''];
       if (!matching) {
@@ -136,13 +140,13 @@ export default abstract class Category {
         );
       }
       const matches = matchesFilter(Env.filterQuery, tags);
-      const realTest = testFn ?? getTestFunction(matches);
-      const realGroup = groupFn ?? getGroupFunction(matches);
-      matching.execute(realGroup, realTest, isSkipped(matches));
+      const realTest = testFn ?? this._getTestFunction(matches);
+      const realGroup = groupFn ?? this._getGroupFunction(matches);
+      matching.execute(realGroup, realTest, this._isSkipped(matches));
     }
   }
 
-  protected runScenarios(scenarios: GherkinScenario[], testFn: It) {
+  protected runScenarios(scenarios: GherkinScenario[], testFn: Global.ItBase) {
     for (const { title, tags } of scenarios) {
       const matching = this._scenarios[title ?? ''];
       if (!matching) {
@@ -151,32 +155,37 @@ export default abstract class Category {
         );
       }
       const matches = matchesFilter(Env.filterQuery, tags);
-      const realTest = testFn ?? getTestFunction(matches);
-      matching.execute(realTest, isSkipped(matches));
+      const realTest = testFn ?? this._getTestFunction(matches);
+      matching.execute(realTest, this._isSkipped(matches));
     }
   }
-}
 
-function getTestFunction(matches: boolean) {
-  if (!Env.filterQuery) {
-    return test;
+  protected _getTestFunction(matches: boolean) {
+    if (!Env.filterQuery) {
+      return test;
+    }
+    return matches ? test : test.skip;
   }
-  return matches ? test : test.skip;
-}
 
-function getGroupFunction(matches: boolean) {
-  if (!Env.filterQuery) {
-    return describe;
+  protected _getGroupFunction(matches: boolean) {
+    if (!Env.filterQuery) {
+      return describe;
+    }
+    return matches ? describe : describe.skip;
   }
-  return matches ? describe : describe.skip;
-}
 
-function isSkipped(matches: boolean) {
-  if (!Env.filterQuery) {
-    return false;
+  protected _isSkipped(matches: boolean) {
+    if (!Env.filterQuery) {
+      return false;
+    }
+    return !matches;
   }
-  return !matches;
-}
-function unknownTitle(title: string): string | undefined {
-  return `No scenario found matching title '${title}'`;
+  protected _unknownTitle(title: string): string | undefined {
+    const { scenarios, outlines } = this._base;
+    const allTitles = scenarios
+      .flatMap((it) => it.title)
+      .concat(outlines.map((it) => it.title))
+      .join('\n*  ');
+    return `No scenario found matching title '${title}'. Options are \n ${allTitles}`;
+  }
 }

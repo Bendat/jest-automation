@@ -2,7 +2,6 @@
 export default {
   displayName: 'cucumber',
   preset: '../../jest.preset.js',
-  testMatch: ['**/*.steps.ts', '**/*.spec.ts'],
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',

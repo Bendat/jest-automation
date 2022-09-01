@@ -1,12 +1,13 @@
 {
   "extends": ["../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
+
   "overrides": [
     {
       "files": ["*.ts"],
       "extends": [
         "plugin:@nrwl/nx/typescript",
-        "./custom-lint-rules.json"
+        "../../custom-lint-rules.json"
       ]
     },
     {

@@ -28,5 +28,5 @@
     "appsDir": "packages",
     "libsDir": "packages"
   },
-  "defaultProject": "dto"
+  "defaultProject": "cucumber"
 }

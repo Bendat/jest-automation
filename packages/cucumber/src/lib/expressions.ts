@@ -1,14 +1,13 @@
 import {
-  Argument,
   CucumberExpression,
   ParameterTypeRegistry,
 } from '@cucumber/cucumber-expressions';
 import { PreparedStepGroup } from './types';
 
 export type ExpressionMatch = {
-    expression: string,
-    args: readonly Argument[]
-}
+  expression: string;
+  args: readonly (string | number | unknown)[];
+};
 
 export function findMatchingExpression(
   text: string,
@@ -20,22 +19,13 @@ export function findMatchingExpression(
       new ParameterTypeRegistry()
     );
     const match = cucumberExpression.match(text);
-    if(match){
-        return {expression: stepName, args: match}
+    if (match) {
+      const args: unknown[] = match.map((res) =>
+        res.parameterType.transform(res, [res.group.value, ...res.group.value])
+      );
+      return { expression: stepName, args };
     }
   }
   return null;
 }
 
-export function getExpressionVariables({expression, args}: ExpressionMatch) {
-  let replacedText = expression;
-  const variables = [];
-  for (const { group, parameterType } of args) {
-    const { value, values } = group;
-    const { name } = parameterType;
-    replacedText = replacedText.replace(`{${name}}`, value);
-    variables.push(value);
-    variables.concat(values)
-  }
-  return { text: replacedText, variables };
-}

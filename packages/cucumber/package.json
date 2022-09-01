@@ -3,10 +3,8 @@
   "version": "0.0.1",
   "dependencies": {
     "@cucumber/cucumber-expressions": "^16.0.0",
-    "@cucumber/messages": "^19.1.2",
-    "@types/jest": "^29.0.0"
-  },
-  "devDependencies": {
-    "@nrwl/jest": "^14.5.10"
+    "@jest-automation/console": "^0.0.5",
+    "@jest-automation/shared-utilities": "^0.0.1",
+    "callsites": "^4.0.0"
   }
 }
