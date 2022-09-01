@@ -67,7 +67,7 @@ const result = builder.build();
 ```
 
 If the package `class-validators` is being used, then their validation
-will be executed by the build method. To disable validaton, pass `false` to the `build` method.
+will be executed by the build method. To disable validation, pass `false` to the `build` method.
 
 ```ts
 const result = builder.build(false);

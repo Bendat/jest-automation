@@ -47,3 +47,4 @@ Given('a {word} with {int} crabs inside', (obj: string, count: number)=>{
 })
 ...
 ```
+> Currently type transformation is only possible with Cucumber Expressions, and is not available for Regex
