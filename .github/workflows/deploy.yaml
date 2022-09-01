@@ -16,7 +16,8 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-          
+          cache: npm
+          cache-dependency-path: package-lock.json
       - name: Install NX
         run: npm i -g nx
       - name: Install dependencies
