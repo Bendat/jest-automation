@@ -1,21 +1,13 @@
-import Background from './background';
-import { GherkinTestValidationError } from './errors/validation-errors';
-import { findMatchingExpression } from './expressions';
-import {
-  GherkinBackground,
-  GherkinScenario,
-  GherkinStep,
-} from './parsing/gherkin-objects';
-import { TestGroup } from './test-group';
-import TestTrackingEvents from './tracking/test-tracker';
-import {
-  StepData,
-  PreparedStepCallback,
-  Steps,
-  PreparedStepData,
-} from './types';
+
 import { Global } from '@jest/types';
-import { throwErrorIfNoMatch } from './utils';
+import { GherkinTestValidationError } from '../../errors/validation-errors';
+import { GherkinScenario, GherkinBackground, GherkinStep } from '../../parsing/gherkin-objects';
+import { findMatchingExpression } from '../../step-expressions/expressions';
+import TestTrackingEvents from '../../tracking/test-tracker';
+import { Steps, PreparedStepCallback, StepData, PreparedStepData } from '../../types';
+import { throwErrorIfNoMatch } from '../../utils';
+import Background from '../backgrounds/background';
+import { TestGroup } from '../test-group/test-group';
 
 export default class Scenario extends TestGroup {
   #events: TestTrackingEvents;

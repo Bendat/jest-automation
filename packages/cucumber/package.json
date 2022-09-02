@@ -2,7 +2,13 @@
   "name": "@jest-automation/cucumber",
   "version": "0.0.1",
   "license": "MIT",
-  "keywords": ["jest", "cucumber", "automation", "gherkin", "bdd"],
+  "keywords": [
+    "jest",
+    "cucumber",
+    "automation",
+    "gherkin",
+    "bdd"
+  ],
   "dependencies": {
     "@cucumber/cucumber-expressions": "^16.0.0",
     "@jest-automation/console": "^0.0.5",

@@ -1,9 +1,9 @@
-import Background from './background';
-import { GherkinBackground, GherkinScenario } from './parsing/gherkin-objects';
+import { GherkinBackground, GherkinScenario } from '../../parsing/gherkin-objects';
 import Scenario from './scenario';
-import TestTrackingSubscribers from './tracking/test-subscribers';
-import TestTrackingEvents from './tracking/test-tracker';
-import { StepFunctions } from './types';
+import TestTrackingSubscribers from '../../tracking/test-subscribers';
+import TestTrackingEvents from '../../tracking/test-tracker';
+import { StepFunctions } from '../../types';
+import Background from '../backgrounds/background';
 
 describe('scenario', () => {
   describe('execute', () => {

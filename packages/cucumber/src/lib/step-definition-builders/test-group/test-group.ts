@@ -1,14 +1,7 @@
-import {
-  PreparedStepCallback,
-  StepData,
-  PreparedStepGroup,
-  PreparedSteps,
-  ScenarioSteps,
-  StepCallbackProvider,
-  Steps,
-} from './types';
-import { assignTextStep, assignRegexStep } from './utils';
-export type StepMatcher = (
+import { PreparedStepCallback, PreparedStepGroup, PreparedSteps, ScenarioSteps, StepCallbackProvider, StepData, Steps } from "../../types";
+import { assignRegexStep, assignTextStep } from "../../utils";
+
+type StepMatcher = (
   regex: RegExp,
   group: string,
   callback: PreparedStepCallback,
@@ -17,12 +10,15 @@ export type StepMatcher = (
 export abstract class TestGroup {
   public readonly title: string | undefined;
   protected _steps: PreparedSteps = new ScenarioSteps();
+
   constructor(title: string | undefined) {
     this.title = title;
   }
+
   get steps() {
     return this._steps;
   }
+  
   abstract loadDefinedSteps(...callbacks: Steps[]): void;
   protected abstract _findMatch: StepMatcher;
 

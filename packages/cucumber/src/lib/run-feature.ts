@@ -1,9 +1,10 @@
-import { FeatureCallback, FeatureCallbackObject } from './types';
-import FeatureRun from './feature-run';
-import TestTrackingEvents from './tracking/test-tracker';
-import TestTrackingSubscribers from './tracking/test-subscribers';
-import { readFeature } from './utils';
+
 import { describe } from '@jest/globals';
+import FeatureRun from './step-definition-builders/feature/feature-run';
+import TestTrackingSubscribers from './tracking/test-subscribers';
+import TestTrackingEvents from './tracking/test-tracker';
+import { FeatureCallback, FeatureCallbackObject } from './types';
+import { readFeature } from './utils';
 
 
 function runFeatureFile(featureCallback: FeatureCallback, featurePath: string) {

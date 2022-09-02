@@ -2,7 +2,7 @@ import Background from './background';
 import {
   StepCallbackProvider,
   StepFunctions,
-} from './types';
+} from '../../types';
 
 describe('background', () => {
   describe('steps', () => {

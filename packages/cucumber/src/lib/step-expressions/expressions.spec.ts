@@ -2,7 +2,7 @@ import {
   CucumberExpression,
   ParameterTypeRegistry,
 } from '@cucumber/cucumber-expressions';
-import { PreparedStepGroup, StepData } from './types';
+import { PreparedStepGroup, StepData } from '../types';
 import {
   findMatchingExpression,
 } from './expressions';

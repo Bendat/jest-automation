@@ -1,20 +1,20 @@
-import { Env } from '../setup';
-import Background from './background';
-import { GherkinTestValidationError } from './errors/validation-errors';
+import { Env } from '../../setup';
+import { GherkinTestValidationError } from '../errors/validation-errors';
 import {
   GherkinFeature,
   GherkinRule,
   GherkinScenario,
   GherkinScenarioOutline,
   GherkinTest,
-} from './parsing/gherkin-objects';
-import Scenario from './scenario';
-import ScenarioOutline from './scenario-outline';
-import { matchesFilter } from './tag-filtering';
-import TestTrackingEvents from './tracking/test-tracker';
-import { Steps } from './types';
+} from '../parsing/gherkin-objects';
+import TestTrackingEvents from '../tracking/test-tracker';
+import { Steps } from '../types';
 import { test, describe } from '@jest/globals';
 import { Global } from '@jest/types';
+import { matchesFilter } from '../tag-filtering/tag-filtering';
+import Background from './backgrounds/background';
+import ScenarioOutline from './scenario-outline/scenario-outline';
+import Scenario from './scenario/scenario';
 
 interface Group<T> {
   [key: string]: T;

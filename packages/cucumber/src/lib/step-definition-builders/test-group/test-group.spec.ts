@@ -1,5 +1,5 @@
 import { TestGroup } from './test-group';
-import { PreparedStepCallback, Steps, StepData } from './types';
+import { PreparedStepCallback, Steps, StepData } from '../../types';
 
 describe('TestGroup', () => {
   class Impl extends TestGroup {
