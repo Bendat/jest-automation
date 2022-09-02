@@ -7,24 +7,24 @@ import {
 import Scenario from './scenario';
 import { TestGroup } from './test-group';
 import TestTrackingEvents from './tracking/test-tracker';
-import { ScenarioInnerCallback } from './types';
+import { Steps } from './types';
 import { Global } from '@jest/types';
-import { PassiveRule } from './rule';
+import { PassiveRule } from './active-rule';
 import ScenarioOutline from './scenario-outline';
 import Category from './category';
 
 export class TopLevelRun extends TestGroup {
-  readonly callbacks: ScenarioInnerCallback[] = [];
+  readonly callbacks: Steps[] = [];
   readonly test: GherkinTest;
   readonly scenarios: Scenario[] = [];
   readonly outlines: ScenarioOutline[] = [];
   readonly rules: PassiveRule[] = [];
-  readonly #steps: ScenarioInnerCallback[] = [];
+  readonly #steps: Steps[] = [];
   readonly #events: TestTrackingEvents;
 
   constructor(
     test: GherkinTest,
-    step: ScenarioInnerCallback,
+    step: Steps,
     events: TestTrackingEvents
   ) {
     super(undefined);
@@ -33,7 +33,7 @@ export class TopLevelRun extends TestGroup {
     this.#events = events;
   }
 
-  loadDefinedSteps(...callbacks: ScenarioInnerCallback[]): void {
+  loadDefinedSteps(...callbacks: Steps[]): void {
     callbacks.forEach((it) => this.callbacks.push(it));
   }
 

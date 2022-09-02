@@ -3,7 +3,7 @@ import { GherkinBackground, GherkinScenario } from './parsing/gherkin-objects';
 import Scenario from './scenario';
 import TestTrackingSubscribers from './tracking/test-subscribers';
 import TestTrackingEvents from './tracking/test-tracker';
-import { ScenarioCallbackObject } from './types';
+import { StepFunctions } from './types';
 
 describe('scenario', () => {
   describe('execute', () => {
@@ -42,7 +42,7 @@ describe('scenario', () => {
 
         const scenario = new GherkinScenario('test', [], undefined, []);
         const innerCbMockFn = jest.fn();
-        const cb = ({ Given }: ScenarioCallbackObject) => {
+        const cb = ({ Given }: StepFunctions) => {
           Given('a test', innerCbMockFn);
         };
         const background = new Background('', cb);
@@ -70,7 +70,7 @@ describe('scenario', () => {
         // itself but here it is not.
         let stepExecuted = false;
         let testExecuted = false;
-        const cb = ({ Given }: ScenarioCallbackObject) => {
+        const cb = ({ Given }: StepFunctions) => {
           Given('a test', () => {
             stepExecuted = true;
           });

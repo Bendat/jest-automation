@@ -1,31 +1,29 @@
 import Category from './category';
-import {
-  GherkinRule,
-  GherkinTest,
-} from './parsing/gherkin-objects';
+import { GherkinRule, GherkinTest } from './parsing/gherkin-objects';
 import TestTrackingEvents from './tracking/test-tracker';
-import {
-  CategoryCallbackObject,
-  RuleInnerCallback,
-  ScenarioInnerCallback,
-} from './types';
+import { CategoryCallbackObject, RuleInnerCallback, Steps } from './types';
 import { afterAll, beforeAll } from '@jest/globals';
 import { Global } from '@jest/types';
 import ScenarioOutline from './scenario-outline';
 import Scenario from './scenario';
+import Background from './background';
 
-export default class Rule extends Category {
+export default class ActiveRule extends Category {
   readonly title: string;
   #callback: RuleInnerCallback;
   constructor(
     test: GherkinTest,
     parsedRule: GherkinRule,
     callback: RuleInnerCallback,
-    events: TestTrackingEvents
+    events: TestTrackingEvents,
+    backgrounds: Background[]
   ) {
     super(test, parsedRule, events);
     this.title = parsedRule.title;
     this.#callback = callback;
+    backgrounds.forEach(({ title, stepCallbacks }) =>
+      this.registerBackground(title, stepCallbacks)
+    );
   }
 
   execute(
@@ -56,17 +54,14 @@ export default class Rule extends Category {
     });
   }
 }
+
 export class PassiveRule extends Category {
   readonly title: string;
-  readonly #steps: ScenarioInnerCallback[];
+  readonly #steps: Steps[];
   public readonly scenarios: Scenario[] = [];
   public readonly outlines: ScenarioOutline[] = [];
 
-  constructor(
-    title: string,
-    steps: ScenarioInnerCallback[],
-    events: TestTrackingEvents
-  ) {
+  constructor(title: string, steps: Steps[], events: TestTrackingEvents) {
     super(undefined, undefined, events);
     this.title = title;
     this.#steps = steps;

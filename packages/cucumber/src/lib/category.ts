@@ -12,7 +12,7 @@ import Scenario from './scenario';
 import ScenarioOutline from './scenario-outline';
 import { matchesFilter } from './tag-filtering';
 import TestTrackingEvents from './tracking/test-tracker';
-import { ScenarioInnerCallback } from './types';
+import { Steps } from './types';
 import { test, describe } from '@jest/globals';
 import { Global } from '@jest/types';
 
@@ -39,7 +39,7 @@ export default abstract class Category {
     this._base = base;
   }
 
-  registerBackground(title: string | undefined, steps: ScenarioInnerCallback) {
+  registerBackground(title: string | undefined, steps: Steps) {
     const background = new Background(title, steps);
     this._backgrounds.push(background);
     return background;
@@ -83,17 +83,17 @@ export default abstract class Category {
     return scenario;
   }
 
-  getScenarioCallback = (title: string, steps: ScenarioInnerCallback) => {
+  getScenarioCallback = (title: string, steps: Steps) => {
     this.registerScenario(title).loadDefinedSteps(steps);
   };
 
-  getOutlineCallback = (title: string, steps: ScenarioInnerCallback) => {
+  getOutlineCallback = (title: string, steps: Steps) => {
     this.registerScenarioOutline(title).loadDefinedSteps(steps);
   };
 
   getBackgroundCallback = (
-    title: string | undefined | ScenarioInnerCallback,
-    steps?: ScenarioInnerCallback
+    title: string | undefined | Steps,
+    steps?: Steps
   ) => {
     if (
       (typeof title === typeof 'string' || title === undefined) &&
@@ -104,7 +104,7 @@ export default abstract class Category {
     }
     this.registerBackground(
       undefined,
-      title as unknown as ScenarioInnerCallback
+      title as unknown as Steps
     );
   };
 

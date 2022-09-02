@@ -5,7 +5,7 @@ import {
   PreparedSteps,
   ScenarioSteps,
   StepCallbackProvider,
-  ScenarioInnerCallback,
+  Steps,
 } from './types';
 import { assignTextStep, assignRegexStep } from './utils';
 export type StepMatcher = (
@@ -23,7 +23,7 @@ export abstract class TestGroup {
   get steps() {
     return this._steps;
   }
-  abstract loadDefinedSteps(...callbacks: ScenarioInnerCallback[]): void;
+  abstract loadDefinedSteps(...callbacks: Steps[]): void;
   protected abstract _findMatch: StepMatcher;
 
   protected _step = (group: PreparedStepGroup) => {
@@ -46,7 +46,7 @@ export abstract class TestGroup {
 
   But: StepCallbackProvider = this._step(this._steps.But);
 
-  Shared = (...steps: ScenarioInnerCallback[]) => {
+  Shared = (...steps: Steps[]) => {
     this.loadDefinedSteps(...steps);
   };
 }

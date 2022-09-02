@@ -47,7 +47,7 @@ async function someAsyncFunction(){
 
 Feature(({ Scenario }) => {
   Scenario('', ({ Given }) => {
-    Given('', someAction);
+    Given('', someActionAsyncFunction);
   });
 });
 ```

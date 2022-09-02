@@ -59,38 +59,181 @@ function attachName(name: string): PreparedStepGroup {
   return { __keyword__: name } as unknown as PreparedStepGroup;
 }
 
-export interface ScenarioCallbackObject {
+export interface StepFunctions {
   Given: StepCallbackProvider;
   When: StepCallbackProvider;
   Then: StepCallbackProvider;
   And: StepCallbackProvider;
   But: StepCallbackProvider;
-  Shared: (...steps: ScenarioInnerCallback[]) => void;
+  Shared: (...steps: Steps[]) => void;
 }
-
-export interface ScenarioInnerCallback{
-  (callbacks: ScenarioCallbackObject): void | Promise<void>
+/**
+ * A interface for a function which provides provides a group of
+ * step definition functions which can be used to map your test
+ * code to a gherkin file.
+ *
+ * Typically this will be defined as an argument to `Scenario()`
+ * but can be declared outside as reusable collection of steps.
+ * These can also be passed directly to the `Scenario` or
+ * they can be utilized by the `Share()` function to create
+ * reusable test components
+ *
+ * Scenario Example:
+ * ```
+ * Feature(({ Scenario })=>{
+ *  //          v---- Steps callback
+ *  Scenario(({Given, When })=>{
+ *    Given('something', ()=>{
+ *     ...
+ *    });
+ *  });
+ * });
+ * ```
+ *
+ * Shared Example:
+ *
+ * ```
+ * const steps: Steps = (({Given}))=>{
+ *    Given('something', ()=>{
+ *     ...
+ *    });
+ * });
+ *
+ * Feature(({ Scenario })=>{
+ *  //          v---- Steps callback
+ *  Scenario(({Shared})=>{
+ *    Shared(steps);
+ *  })
+ * });
+ * ```
+ */
+export interface Steps {
+  (callbacks: StepFunctions): void | Promise<void>;
 }
 
 export type ScenarioCallback = (
   title: string,
-  callbacks: ScenarioInnerCallback
+  steps: Steps
 ) => void | Promise<void>;
 
-export type BackgroundCallbackObject = ScenarioCallbackObject;
+/**
+ * Describes the Step Functions objects for a Background
+ */
+export type BackgroundCallbackObject = StepFunctions;
 
 export type BackgroundInnerCallback = (
   callbacks: BackgroundCallbackObject
 ) => void | Promise<void>;
 
 export type BackgroundCallback = (
-  title: string | undefined | ScenarioInnerCallback,
-  callbacks?: ScenarioInnerCallback
+  title: string | undefined | Steps,
+  callbacks?: Steps
 ) => void | Promise<void>;
 
+/**
+ * A callback argument which provides the test groups like Scenario.
+ * Can be executed to access the Step Definition functions
+ *
+ * Example:
+ * ```
+ * // Bad
+ * Feature((tests)=>{
+ *  const { Scenario } = test
+ *  Scenario((steps)=>{
+ *      const {Given, When, Then} = steps
+ *   })
+ *   // or
+ *   tests.Scenario('', (steps)=>{})
+ * })
+ * // Better
+ * Feature(({ Scenario })=>{
+ *  Scenario(({Given, When, Then})=>{
+ *
+ *  })
+ * })
+ *
+ * ```
+ */
 export interface CategoryCallbackObject {
+  /**
+   * Defines a scenario when called. The scenario is loaded
+   * and validated, while its step definition are processed
+   * into a jest test.
+   *
+   * The step definition functions are provided as arguments
+   * to the Scenario callback.
+   * Example:
+   * ```
+   * Scenario('a scenario', ({ Given, When })=>{
+   *    Given('a given step', ()=>{});
+   *    When('a when step', ()=>{});
+   * })
+   * ```
+   */
   Scenario: ScenarioCallback;
+  /**
+   * Similar to scenario but will repeat execution for
+   * every row of Examples in the outline.
+   *
+   * The step definition functions are provided as arguments
+   * to the Scenario callback.
+   *
+   * Cucumber Expressions or Regex can be used to extract
+   * Examples variables from a step.
+   *
+   * Example:
+   * ```
+   * ScenarioOutline('a scenario outline', ({ Given, When })=>{
+   *    Given('a {word} dog', (color)=>{
+   *      expect(color).toBe('brown')
+   *    });
+   *    When('it eats {int} steaks', (count)=>{
+   *       expect(count).toBe(3)
+   *    });
+   * })
+   * // For:
+   * // ScenarioOutline: a scenario outline
+   * //   Given a <color> dog
+   * //   When it eats <count> steaks
+   * //
+   * //   Examples:
+   * //    | color | count |
+   * //    | brown |   1   |
+   * ```
+   */
   ScenarioOutline: ScenarioCallback;
+  /**
+   * Stores steps to be executed before each test in scope.
+   * Steps defined here do not need to exist in the actual
+   * gherkin feature file background, as long as they apply
+   * to all tests in scope of the background.
+   *
+   * Multiple background calls are allowed and will be grouped
+   * together within scope. A background can have a name but it's optional.
+   *
+   * Example:
+   * ```
+   * Background('A Named Background', ({ Given, When }) => {
+   *  Given('a holly', () => {
+   *   expect(1).toBe(1);
+   *  });
+   *  Given('a jolly', () => {
+   *   expect(1).toBe(1);
+   *  });
+   *  When('a Christmas', () => {
+   *   expect(1).toBe(1);
+   *  });
+   * });
+   * 
+   * // nameless
+   * 
+   * Background(({ Given }) => {
+   *  Given('a holly', () => {
+   *   expect(1).toBe(1);
+   *  });
+   * });
+   * ```
+   */
   Background: BackgroundCallback;
 }
 
@@ -101,8 +244,15 @@ export type RuleCallback = (
 
 export type RuleInnerCallback = (callbacks: CategoryCallbackObject) => void;
 
+/**
+ * Test functions specific to the Feature function, provided as
+ * an argument to the user defined callback.
+ *
+ * - All - Accepts a collection of steps and assembles scenarios automatically
+ * - Rule - Accepts a rule name and a CategoryCallbackObject which acts like a lower scoped Feature
+ */
 export interface FeatureCallbackObject extends CategoryCallbackObject {
-  All: (...steps: ScenarioInnerCallback[]) => void;
+  All: (...steps: Steps[]) => void;
   Rule: RuleCallback;
 }
 

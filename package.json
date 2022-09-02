@@ -18,6 +18,7 @@
     "dotenv": "^16.0.2",
     "get-current-line": "^6.6.0",
     "prism-react-renderer": "^1.2.1",
+    "project-root-directory": "^1.0.3",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "reflect-metadata": "^0.1.13",

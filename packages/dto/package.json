@@ -1,6 +1,7 @@
 {
   "name": "@jest-automation/dto",
   "version": "0.0.7",
+  "license": "MIT",
   "keywords": ["dto", "builder", "builder-pattern", "builder pattern"],
   "repository": {
     "type": "git",

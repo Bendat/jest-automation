@@ -1,6 +1,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
-
+import * as projectRootDirectory from 'project-root-directory';
 import {
   PreparedStepGroup,
   PreparedStepCallback,
@@ -12,7 +12,7 @@ import { parseCucumber } from './parsing/parser';
 export function assignTextStep(
   text: string | RegExp,
   group: PreparedStepGroup,
-  callback: PreparedStepCallback,
+  callback: PreparedStepCallback
 ) {
   const value = text as unknown as string;
   group[value] = new StepData(value, undefined, callback);
@@ -21,11 +21,11 @@ export function assignTextStep(
 export function throwErrorIfNoMatch(
   matchingStep: PreparedStepData,
   keyword: string,
-  text: string,
+  text: string
 ) {
   if (!matchingStep) {
     throw new Error(
-      `No matching step found in feature file for ${keyword} ${text}`,
+      `No matching step found in feature file for ${keyword} ${text}`
     );
   }
 }
@@ -37,8 +37,8 @@ export function assignRegexStep(
   matcher: (
     regex: RegExp,
     group: string,
-    callback: PreparedStepCallback,
-  ) => StepData | undefined,
+    callback: PreparedStepCallback
+  ) => StepData | undefined
 ) {
   const step = matcher(text, group.__keyword__, callback);
   if (step) {
@@ -46,9 +46,26 @@ export function assignRegexStep(
   }
 }
 
-export function readFeatureRelative(file: string, callerFile: string) {
-  const callerDirectory = path.dirname(callerFile || '');
-  const absolutePath = path.resolve(callerDirectory, file);
-  const text = fs.readFileSync(absolutePath, 'utf-8');
+export function readFeature(file: string, callerFile: string) {
+  const path = getFeatureByPath(file, callerFile);
+  const text = fs.readFileSync(path, 'utf-8');
   return parseCucumber(text);
+}
+
+export function getFeatureByPath(file: string, callerFile: string) {
+  if (path.isAbsolute(file)) {
+    console.warn(
+      'using an absolute path to a feature file. Are you sure you want to do that?'
+    );
+    return file;
+  }
+  const rootRegex = /[~]\//;
+  if (rootRegex.test(file)) {
+    const root = projectRootDirectory;
+    const filePath = file.replace(rootRegex, '')
+    const resolved = path.resolve(root, filePath);
+    return resolved
+  }
+  const callerDirectory = path.dirname(callerFile || '');
+  return path.resolve(callerDirectory, file);
 }

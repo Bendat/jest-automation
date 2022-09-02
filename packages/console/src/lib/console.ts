@@ -9,13 +9,16 @@ import {
 import * as util from 'util';
 import getCurrentLine from 'get-current-line';
 import { ConsoleGroupToken } from './group-tokens';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+console.group = (..._: unknown[]) => undefined;
+console.groupEnd = () => undefined;
 const originalLog = console.log;
 const originalInfo = console.info;
 const originalWarn = console.warn;
 const originalError = console.error;
 const originalGroup = console.group;
 const originalGroupEnd = console.groupEnd;
-let groupsEnabled = true;
+let groupsEnabled = false;
 
 export function useConsoleGroups() {
   groupsEnabled = true;
@@ -160,11 +163,9 @@ export function startGroup(
   type: ConsoleGroupToken | string,
   ...tags: (string | RegExp)[]
 ) {
-  groupStack.push(type);
   if (groupsEnabled) {
+    groupStack.push(type);
     console.group([type, ...tags].join(' ').trim());
-  } else {
-    entitle(type.toString());
   }
 }
 

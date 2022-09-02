@@ -12,7 +12,7 @@ This library was inspired by [jest-cucumber](https://github.com/bencompton/jest-
 npm i -D @jest-automation/cucumber
 ```
 
-```json
+```json title="Add test pattern to jest config"
 "testMatch": [
     "**/*.steps.js"
 ],
@@ -31,7 +31,12 @@ import { Feature } from '@jest-automation/cucumber';
 
 Feature(() => {}, './features/SearchHouses.feature');
 ```
-
+:::info
+ The path to the feature file can be specified relative to the current
+ file position by starting with `./`, `../` or no prefix.
+ The prefix `~/` will attempt to load the file relative to the root
+ of the running project, while an absolute path will be used as is.
+:::
 The `Feature` function takes a callback which provides as an argument an object containing the following test functions:
 
 - `Scenario`

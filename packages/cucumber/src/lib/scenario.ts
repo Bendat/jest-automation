@@ -11,7 +11,7 @@ import TestTrackingEvents from './tracking/test-tracker';
 import {
   StepData,
   PreparedStepCallback,
-  ScenarioInnerCallback,
+  Steps,
   PreparedStepData,
 } from './types';
 import { Global } from '@jest/types';
@@ -54,7 +54,7 @@ export default class Scenario extends TestGroup {
     );
   }
 
-  loadDefinedSteps(...callbacks: ScenarioInnerCallback[]) {
+  loadDefinedSteps(...callbacks: Steps[]) {
     const { Given, When, Then, And, But, Shared } = this;
     const params = { Given, When, Then, And, But, Shared };
     callbacks.forEach((callback) => {

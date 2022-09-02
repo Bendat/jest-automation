@@ -2,14 +2,11 @@ import { FeatureCallback, FeatureCallbackObject } from './types';
 import FeatureRun from './feature-run';
 import TestTrackingEvents from './tracking/test-tracker';
 import TestTrackingSubscribers from './tracking/test-subscribers';
-import { readFeatureRelative } from './utils';
-import { Flags } from '../setup';
-import { useConsoleGroups } from '@jest-automation/console';
+import { readFeature } from './utils';
 import { describe } from '@jest/globals';
+
+
 function runFeatureFile(featureCallback: FeatureCallback, featurePath: string) {
-  if (Flags.values.loggingGroups) {
-    useConsoleGroups();
-  }
   const parsedGherkin = getFeature(featurePath);
   const tracker = new TestTrackingEvents(new TestTrackingSubscribers());
   tracker.featureStarted(parsedGherkin.feature.title);
@@ -26,15 +23,15 @@ function runFeatureFile(featureCallback: FeatureCallback, featurePath: string) {
   feature.execute(describe);
 }
 
-function callSites(): CallSite[] {
+function getCallerFiles(): CallerFile[] {
   const _prepareStackTrace = Error.prepareStackTrace;
   Error.prepareStackTrace = (_, stack) => stack;
   const stack = new Error().stack.slice(1);
   Error.prepareStackTrace = _prepareStackTrace;
-  return stack as unknown as CallSite[];
+  return stack as unknown as CallerFile[];
 }
 
-interface CallSite {
+interface CallerFile {
   /**
 	Returns the value of `this`.
 	*/
@@ -101,11 +98,31 @@ interface CallSite {
   isConstructor(): boolean;
 }
 
+/** @deprecated */
 function getFeature(file: string) {
-  const caller = callSites()[2].getFileName() ?? '';
-  return readFeatureRelative(file, caller);
+  const caller = getCallerFiles()[2].getFileName() ?? '';
+  return readFeature(file, caller);
 }
-
+/**
+ * Entrypoint function for @jest-automation. 
+ * 
+ * Takes a callback which provides Scenarios, ScenarioOutlines,
+ * Backgrounds and other options to build out the step code for gherkin
+ * feature files.
+ * 
+ * Example:
+ * Feature(({ Scenario }) => {
+ *  Scenario(({Given, When }) => {
+ *    Given('something', () => {
+ *     ...
+ *    });
+ *  });
+ * });
+ * ```
+ * @param featureCallback The actions to take to test your feature file
+ * @param featurePath The path to the feature file. Can be relative to the test file, absolute, or derived from the root of the running project with `~/`
+ */
 const Feature = runFeatureFile;
+
 
 export default Feature;

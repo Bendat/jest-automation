@@ -5,7 +5,7 @@ import {
 } from './parsing/gherkin-objects';
 import Scenario from './scenario';
 import TestTrackingEvents from './tracking/test-tracker';
-import { ScenarioInnerCallback } from './types';
+import { Steps } from './types';
 import {afterAll, beforeAll } from '@jest/globals';
 import {Global} from '@jest/types'
 
@@ -30,7 +30,7 @@ export default class ScenarioOutline {
     this.#buildScenarios();
   }
 
-  loadDefinedSteps(...callbacks: ScenarioInnerCallback[]) {
+  loadDefinedSteps(...callbacks: Steps[]) {
     for (const scenario of this.#scenarios) {
       callbacks.forEach((callback) => {
         callback(scenario);

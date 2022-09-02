@@ -1,12 +1,12 @@
 import Background from './background';
 import {
   StepCallbackProvider,
-  ScenarioCallbackObject,
+  StepFunctions,
 } from './types';
 
 describe('background', () => {
   describe('steps', () => {
-    const mockScenarioCallbackObject: ScenarioCallbackObject = {
+    const mockScenarioCallbackObject: StepFunctions = {
       Given: jest.fn(),
       When: jest.fn() ,
       Then: jest.fn(),

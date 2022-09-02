@@ -4,7 +4,7 @@ import Feature from '../../../cucumber/src/lib/run-feature';
  * shared steps of a scenario, provided they are consistent
  * across scenarios and not already in a background.
  */
-Feature(({ Background, Scenario }) => {
+Feature(({ Background, Scenario, ScenarioOutline }) => {
   afterAll(() => {
     expect.assertions(4);
   });

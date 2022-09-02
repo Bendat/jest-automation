@@ -76,7 +76,7 @@ import {applyUserCredentials, validateLoginSuccessful} from '../shared'
 ....
 Scenario(({When, Shared})=>{
     Shared(
-        validateLoginSuccessful('barrybongo')
+        applyUserCredentials('barrybongo')
     );
 
     When('the user logs in', ()=>...)

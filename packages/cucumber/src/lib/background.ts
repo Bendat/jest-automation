@@ -1,8 +1,8 @@
-import { ScenarioInnerCallback } from './types';
+import { Steps } from './types';
 
 export default class Background {
   constructor(
     public readonly title: string | undefined,
-    public readonly stepCallbacks: ScenarioInnerCallback,
+    public readonly stepCallbacks: Steps,
   ) {}
 }

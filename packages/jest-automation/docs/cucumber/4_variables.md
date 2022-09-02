@@ -37,7 +37,7 @@ Given('a {word} with {int} crabs inside', ()=>{})
 ...
 ```
 
-The values extracted can be taken from the args list
+The values extracted can be taken from the argument list
 
 ```ts
 ...
@@ -48,3 +48,24 @@ Given('a {word} with {int} crabs inside', (obj: string, count: number)=>{
 ...
 ```
 > Currently type transformation is only possible with Cucumber Expressions, and is not available for Regex
+
+
+# Tables
+
+The last or second to last variable passed to a step will
+be its table, if one is defined:
+
+```gherkin
+Given a list of books and authors
+| book                            | author      |
+| The Good, The BDD, and The Ugly | Joe Millard |
+```
+
+```ts title="Step Definition"
+Given('a list of books and authors', (table: GherkinTable)=>{
+    const [firstItem] = table.rows;
+    const [book, author] = firstItem;
+    expect(book).toBe('The Good, The BDD, and The Ugly')
+    expect(author).toBe('Joe Millard)
+})
+```

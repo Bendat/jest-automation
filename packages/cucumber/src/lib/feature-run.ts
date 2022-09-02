@@ -1,9 +1,9 @@
-import { RuleInnerCallback, ScenarioInnerCallback } from './types';
+import { RuleInnerCallback, Steps } from './types';
 import TestTrackingEvents from './tracking/test-tracker';
 import { TopLevelRun } from './top-level-run';
 import Category from './category';
 import { GherkinTest } from './parsing/gherkin-objects';
-import Rule from './rule';
+import ActiveRule from './active-rule';
 import { afterAll, test, } from '@jest/globals';
 import type { Global } from '@jest/types';
 
@@ -20,11 +20,11 @@ export default class FeatureRun extends Category {
     if (!matching) {
       throw new Error(`Could not find a matching rule for ${title}`);
     }
-    const rule = new Rule(this._test, matching, callback, this._events);
+    const rule = new ActiveRule(this._test, matching, callback, this._events, this._backgrounds);
     this._rules[title] = rule;
   }
 
-  getTopLevelRunCallback = (steps: ScenarioInnerCallback) => {
+  getTopLevelRunCallback = (steps: Steps) => {
     this.registerTopLevelRun(steps);
   };
 
@@ -32,7 +32,7 @@ export default class FeatureRun extends Category {
     this.registerRule(title, rule);
   };
 
-  registerTopLevelRun(steps: ScenarioInnerCallback) {
+  registerTopLevelRun(steps: Steps) {
     this.#run = new TopLevelRun(this._test, steps, this._events);
     this.#run?.assembleScenarios();
     this.#run.assembleScenarioOutlines();
