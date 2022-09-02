@@ -19,7 +19,7 @@ be chained.
 ### enableLoggingGroups()
 
 Enables logging groups. When enabled, logs
-will be indented and unindented as tests and
+will be indented and un-indented as tests and
 steps complete, making it easier to understand the execution
 of your test.
 
