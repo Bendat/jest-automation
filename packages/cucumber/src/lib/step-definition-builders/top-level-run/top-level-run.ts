@@ -12,6 +12,7 @@ import ScenarioOutline from '../scenario-outline/scenario-outline';
 import Scenario from '../scenario/scenario';
 import { TestGroup } from '../test-group/test-group';
 import { PassiveRule } from '../rules/passive-rule';
+import { di } from '../../dependency-injection/registrars';
 
 export class TopLevelRun extends TestGroup {
   readonly callbacks: Steps[] = [];
@@ -22,11 +23,7 @@ export class TopLevelRun extends TestGroup {
   readonly #steps: Steps[] = [];
   readonly #events: TestTrackingEvents;
 
-  constructor(
-    test: GherkinTest,
-    step: Steps,
-    events: TestTrackingEvents
-  ) {
+  constructor(test: GherkinTest, step: Steps, events: TestTrackingEvents) {
     super(undefined);
     this.test = test;
     this.#steps.push(step);
@@ -44,13 +41,12 @@ export class TopLevelRun extends TestGroup {
   ) {
     const { backgrounds, scenarios } = group;
     scenarios.forEach((scenario) => {
-      const scen = new Scenario(
-        scenario.title,
-        scenario,
-        [],
-        [...outerBackgrounds, ...backgrounds],
-        this.#events
-      );
+      const { container } = di();
+      const bgs = [...outerBackgrounds, ...backgrounds];
+      const scen = container
+        .resolve(Scenario)
+        .configure(this._title ?? '', scenario, [], bgs);
+
       scen.loadDefinedSteps(...this.#steps);
       parent.scenarios.push(scen);
     });
@@ -130,10 +126,7 @@ class TopLevelCategory extends Category {
     outlines.forEach((it) => (this._outlines[it.title] = it));
     rules.forEach((it) => (this._rules[it.title] = it));
   }
-  execute(
-    testGrouping: Global.DescribeBase,
-    testFn: Global.ItBase
-  ): void {
+  execute(testGrouping: Global.DescribeBase, testFn: Global.ItBase): void {
     this.runRules(this._test.feature.rules, testGrouping, testFn);
     this.runOutlines(this._test.feature.outlines, testGrouping, testFn);
     this.runScenarios(this._test.feature.scenarios, testFn);

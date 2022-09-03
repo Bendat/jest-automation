@@ -8,13 +8,15 @@ type StepMatcher = (
 ) => StepData | undefined;
 
 export abstract class TestGroup {
-  public readonly title: string | undefined;
+  protected _title: string | undefined;
   protected _steps: PreparedSteps = new ScenarioSteps();
 
-  constructor(title: string | undefined) {
-    this.title = title;
+  constructor(title?: string | undefined) {
+    this._title = title;
   }
-
+  get title(){
+    return this._title
+  }
   get steps() {
     return this._steps;
   }

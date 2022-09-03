@@ -1,6 +1,7 @@
 /* eslint-disable */
 export default {
   displayName: 'cucumber',
+  setupFilesAfterEnv: ['reflect-metadata'],
   preset: '../../jest.preset.js',
   globals: {
     'ts-jest': {
