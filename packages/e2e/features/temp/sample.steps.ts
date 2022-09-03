@@ -1,5 +1,6 @@
 import { GherkinTable } from '../../../cucumber/src/lib/parsing/gherkin-objects';
 import Feature from '../../../cucumber/src/lib/run-feature';
+
 class UserDriver {
   setPassword(pw: string) {}
   setUsername(us: string) {}
@@ -7,13 +8,14 @@ class UserDriver {
   verifyProfile() {}
   verifyError(table: GherkinTable) {}
 }
-const User = new UserDriver();
+
 Feature(({ Background, Scenario, Rule }) => {
   let user: UserDriver;
   beforeEach(() => {
+    console.log('resettng')
     user = new UserDriver();
   });
-  
+
   Background(({ Given, When }) => {
     Given('a provided password {string}', (password: string) => {
       user.setPassword(password);
@@ -37,7 +39,9 @@ Feature(({ Background, Scenario, Rule }) => {
     });
   });
 
-  Rule( 'A username cannot contain special characters', ({ ScenarioOutline }) => {
+  Rule(
+    'A username cannot contain special characters',
+    ({ ScenarioOutline }) => {
       ScenarioOutline(
         'A user cannot register with a special character',
         ({ Then }) => {

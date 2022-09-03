@@ -1,4 +1,4 @@
-import { Steps } from './types';
+import { Steps } from "../../types";
 
 export default class Background {
   constructor(

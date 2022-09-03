@@ -1,4 +1,5 @@
-import Feature from '../../../cucumber/src/lib/run-feature';
+import Feature from "../../../cucumber/src/lib/run-feature";
+
 /**
  * The Background callback can extend into the opening
  * shared steps of a scenario, provided they are consistent

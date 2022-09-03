@@ -3,15 +3,15 @@ import {
   GherkinScenario,
   GherkinScenarioOutline,
   GherkinStep,
-} from './parsing/gherkin-objects';
+} from '../../parsing/gherkin-objects';
 import ScenarioOutline from './scenario-outline';
-import TestTrackingSubscribers from './tracking/test-subscribers';
-import TestTrackingEvents from './tracking/test-tracker';
+import TestTrackingSubscribers from '../../tracking/test-subscribers';
+import TestTrackingEvents from '../../tracking/test-tracker';
 
 describe('scenario outline', () => {
   describe('scenario', () => {
     describe('execute', () => {
-      jest.mock('./scenario', () => {
+      jest.mock('../scenario/scenario', () => {
         return jest.fn().mockImplementation(() => {
           return {
             execute: jest.fn((testFn: (...args: unknown[]) => void) =>

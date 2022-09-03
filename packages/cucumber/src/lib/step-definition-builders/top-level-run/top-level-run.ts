@@ -3,15 +3,15 @@ import {
   GherkinFeature,
   GherkinRule,
   GherkinTest,
-} from './parsing/gherkin-objects';
-import Scenario from './scenario';
-import { TestGroup } from './test-group';
-import TestTrackingEvents from './tracking/test-tracker';
-import { Steps } from './types';
+} from '../../parsing/gherkin-objects';
+import TestTrackingEvents from '../../tracking/test-tracker';
+import { Steps } from '../../types';
 import { Global } from '@jest/types';
-import { PassiveRule } from './active-rule';
-import ScenarioOutline from './scenario-outline';
-import Category from './category';
+import Category from '../category';
+import ScenarioOutline from '../scenario-outline/scenario-outline';
+import Scenario from '../scenario/scenario';
+import { TestGroup } from '../test-group/test-group';
+import { PassiveRule } from '../rules/passive-rule';
 
 export class TopLevelRun extends TestGroup {
   readonly callbacks: Steps[] = [];

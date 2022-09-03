@@ -1,11 +1,12 @@
-import { RuleInnerCallback, Steps } from './types';
-import TestTrackingEvents from './tracking/test-tracker';
-import { TopLevelRun } from './top-level-run';
-import Category from './category';
-import { GherkinTest } from './parsing/gherkin-objects';
-import ActiveRule from './active-rule';
+
 import { afterAll, test, } from '@jest/globals';
 import type { Global } from '@jest/types';
+import { GherkinTest } from '../../parsing/gherkin-objects';
+import TestTrackingEvents from '../../tracking/test-tracker';
+import { RuleInnerCallback, Steps } from '../../types';
+import Category from '../category';
+import ActiveRule from '../rules/active-rule';
+import { TopLevelRun } from '../top-level-run/top-level-run';
 
 export default class FeatureRun extends Category {
 

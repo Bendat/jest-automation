@@ -1,13 +1,11 @@
-import Background from './background';
-import {
-  GherkinBackground,
-  GherkinScenarioOutline,
-} from './parsing/gherkin-objects';
-import Scenario from './scenario';
-import TestTrackingEvents from './tracking/test-tracker';
-import { Steps } from './types';
+
 import {afterAll, beforeAll } from '@jest/globals';
 import {Global} from '@jest/types'
+import { GherkinScenarioOutline, GherkinBackground } from '../../parsing/gherkin-objects';
+import TestTrackingEvents from '../../tracking/test-tracker';
+import { Steps } from '../../types';
+import Background from '../backgrounds/background';
+import Scenario from '../scenario/scenario';
 
 export default class ScenarioOutline {
   #parsedScenarioOutline: GherkinScenarioOutline;

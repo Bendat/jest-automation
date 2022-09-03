@@ -159,6 +159,7 @@ export function entitle(title: string) {
     process.stdout.write('\u001b[1m' + format(title) + '\u001b[22m\n');
   }
 }
+
 export function startGroup(
   type: ConsoleGroupToken | string,
   ...tags: (string | RegExp)[]
