@@ -8,10 +8,11 @@ class UserDriver {
   verifyProfile() {}
   verifyError(table: GherkinTable) {}
 }
-const User = new UserDriver();
+
 Feature(({ Background, Scenario, Rule }) => {
   let user: UserDriver;
   beforeEach(() => {
+    console.log('resettng')
     user = new UserDriver();
   });
 

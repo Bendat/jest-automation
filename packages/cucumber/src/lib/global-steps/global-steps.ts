@@ -1,9 +1,9 @@
-import { GherkinStep } from './parsing/gherkin-objects';
+import { GherkinStep } from '../parsing/gherkin-objects';
 import {
   PreparedStepCallback,
   PreparedStepData,
   PreparedStepGroup,
-} from './types';
+} from '../types';
 
 class StepCache {
   Given: PreparedStepData[] = [];

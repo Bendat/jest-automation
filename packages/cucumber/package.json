@@ -11,8 +11,7 @@
   ],
   "dependencies": {
     "@cucumber/cucumber-expressions": "^16.0.0",
-    "@jest-automation/console": "^0.0.5",
-    "@jest-automation/shared-utilities": "^0.0.1",
-    "callsites": "^4.0.0"
+    "@jest-automation/console": "^0.0.6",
+    "@jest-automation/shared-utilities": "^0.0.3"
   }
 }
