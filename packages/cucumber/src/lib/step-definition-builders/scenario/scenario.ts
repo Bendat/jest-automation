@@ -1,33 +1,53 @@
-
 import { Global } from '@jest/types';
+import { Injectable } from '../../dependency-injection/injectable';
 import { GherkinTestValidationError } from '../../errors/validation-errors';
-import { GherkinScenario, GherkinBackground, GherkinStep } from '../../parsing/gherkin-objects';
+import {
+  GherkinScenario,
+  GherkinBackground,
+  GherkinStep,
+} from '../../parsing/gherkin-objects';
 import { findMatchingExpression } from '../../step-expressions/expressions';
 import TestTrackingEvents from '../../tracking/test-tracker';
-import { Steps, PreparedStepCallback, StepData, PreparedStepData } from '../../types';
+import {
+  Steps,
+  PreparedStepCallback,
+  StepData,
+  PreparedStepData,
+} from '../../types';
 import { throwErrorIfNoMatch } from '../../utils';
 import Background from '../backgrounds/background';
 import { TestGroup } from '../test-group/test-group';
 
+@Injectable()
 export default class Scenario extends TestGroup {
+  #parsedScenario: GherkinScenario;
+  #backgrounds: Background[] = [];
+  #parsedBackgrounds: GherkinBackground[];
   #events: TestTrackingEvents;
 
-  constructor(
-    public readonly title: string | undefined,
-    public readonly parsedScenario: GherkinScenario,
-    public readonly backgrounds: Background[] = [],
-    public readonly parsedBackgrounds: GherkinBackground[] = [],
-    events: TestTrackingEvents
+  constructor(events: TestTrackingEvents) {
+    super();
+    this.#events = events
+  }
+
+  configure(
+    title: string,
+    parsedScenario: GherkinScenario,
+    backgrounds: Background[],
+    parsedBackgrounds: GherkinBackground[]
   ) {
-    super(title);
-    this.#events = events;
+    this._title = title;
+    this.#parsedScenario = parsedScenario;
+    this.#backgrounds = backgrounds;
+    this.#parsedBackgrounds = parsedBackgrounds;
+    return this
   }
 
   execute(
     testFunction: Global.ItBase,
     isSkipped = false
   ): void | Promise<void> {
-    const scenario = this.parsedScenario;
+    const scenario = this.#parsedScenario;
     this.#loadBackgroundSteps();
     return testFunction(
       'Scenario: ' + scenario.title ?? 'Untitled Scenario',
@@ -35,7 +55,7 @@ export default class Scenario extends TestGroup {
         if (isSkipped) {
           return;
         }
-        this.#events.scenarioStarted(this.title);
+        this.#events.scenarioStarted(this._title);
         try {
           await this.#runBackgroundSteps();
           await this.#runScenarioSteps();
@@ -67,7 +87,7 @@ export default class Scenario extends TestGroup {
   };
 
   #loadBackgroundSteps() {
-    const bgs = this.backgrounds;
+    const bgs = this.#backgrounds;
     for (const bg of bgs) {
       this.loadDefinedSteps(bg.stepCallbacks);
     }
@@ -78,7 +98,7 @@ export default class Scenario extends TestGroup {
     group: string,
     callback: PreparedStepCallback
   ) {
-    const bg = this.parsedBackgrounds;
+    const bg = this.#parsedBackgrounds;
     for (const { steps } of bg) {
       for (const parsedStep in steps) {
         const { text, keyword } = steps[parsedStep];
@@ -93,7 +113,7 @@ export default class Scenario extends TestGroup {
   }
 
   #stepsMatch(regex: RegExp, group: string, callback: PreparedStepCallback) {
-    for (const { text, keyword } of this.parsedScenario.steps) {
+    for (const { text, keyword } of this.#parsedScenario.steps) {
       if (regex.test(text)) {
         if (keyword !== group) {
           continue;
@@ -104,7 +124,7 @@ export default class Scenario extends TestGroup {
   }
 
   async #runBackgroundSteps() {
-    for (const { steps } of this.parsedBackgrounds) {
+    for (const { steps } of this.#parsedBackgrounds) {
       for (const parsedStep in steps) {
         await this.#runStep(steps[parsedStep]);
       }
@@ -112,7 +132,7 @@ export default class Scenario extends TestGroup {
   }
 
   async #runScenarioSteps() {
-    for (const step of this.parsedScenario.steps) {
+    for (const step of this.#parsedScenario.steps) {
       await this.#runStep(step);
     }
   }

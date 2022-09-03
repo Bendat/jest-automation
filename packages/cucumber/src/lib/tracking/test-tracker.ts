@@ -1,6 +1,8 @@
+import { Injectable } from '../dependency-injection/injectable';
 import Bag from './bag';
 import TestTrackingSubscribers from './test-subscribers';
 
+@Injectable()
 export default class TestTrackingEvents {
   #subscribers: TestTrackingSubscribers;
   constructor(subscribers: TestTrackingSubscribers) {
