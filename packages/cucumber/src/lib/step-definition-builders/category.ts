@@ -15,6 +15,7 @@ import { matchesFilter } from '../tag-filtering/tag-filtering';
 import Background from './backgrounds/background';
 import ScenarioOutline from './scenario-outline/scenario-outline';
 import Scenario from './scenario/scenario';
+import { di } from '../dependency-injection/registrars';
 
 interface Group<T> {
   [key: string]: T;
@@ -52,13 +53,10 @@ export default abstract class Category {
     if (!found) {
       throw new GherkinTestValidationError(this._unknownTitle(title));
     }
-    const scenario = new Scenario(
-      title,
-      found,
-      this._backgrounds,
-      backgrounds,
-      this._events
-    );
+    const { container } = di();
+    const scenario = container
+      .resolve(Scenario)
+      .configure(title, found, this._backgrounds, backgrounds);
     this._scenarios[title] = scenario;
     return scenario;
   }
@@ -102,10 +100,7 @@ export default abstract class Category {
       this.registerBackground(title as unknown as string, steps);
       return;
     }
-    this.registerBackground(
-      undefined,
-      title as unknown as Steps
-    );
+    this.registerBackground(undefined, title as unknown as Steps);
   };
 
   protected runOutlines(

@@ -1,4 +1,5 @@
 import { endGroup, startGroup } from '@jest-automation/console';
+import { Injectable } from '../dependency-injection/injectable';
 import Bag from './bag';
 
 enum ConsoleGroupToken {
@@ -9,6 +10,7 @@ enum ConsoleGroupToken {
   Step = '',
 }
 
+@Injectable()
 export default class TestTrackingSubscribers {
   readonly featureStarted = new Bag((title: string) =>
     startGroup(ConsoleGroupToken.Feature, title)

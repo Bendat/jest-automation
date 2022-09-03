@@ -1,7 +1,10 @@
-
-import {afterAll, beforeAll } from '@jest/globals';
-import {Global} from '@jest/types'
-import { GherkinScenarioOutline, GherkinBackground } from '../../parsing/gherkin-objects';
+import { afterAll, beforeAll } from '@jest/globals';
+import { Global } from '@jest/types';
+import { di } from '../../dependency-injection/registrars';
+import {
+  GherkinScenarioOutline,
+  GherkinBackground,
+} from '../../parsing/gherkin-objects';
 import TestTrackingEvents from '../../tracking/test-tracker';
 import { Steps } from '../../types';
 import Background from '../backgrounds/background';
@@ -15,7 +18,7 @@ export default class ScenarioOutline {
   #events: TestTrackingEvents;
 
   constructor(
-    public title: string,
+    public readonly title: string,
     parsedScenarioOutline: GherkinScenarioOutline,
     backgrounds: Background[],
     parsedBackgrounds: GherkinBackground[] = [],
@@ -36,12 +39,18 @@ export default class ScenarioOutline {
     }
   }
 
-  execute(group: Global.DescribeBase, testFn: Global.ItBase, isSkipped = false, after = afterAll, before = beforeAll) {
+  execute(
+    group: Global.DescribeBase,
+    testFn: Global.ItBase,
+    isSkipped = false,
+    after = afterAll,
+    before = beforeAll
+  ) {
     group(`Scenario Outline: ${this.title}`, () => {
       if (!isSkipped) {
-        before(()=>{
+        before(() => {
           this.#events.scenarioOutlineStarted(this.title);
-        })
+        });
         after(() => {
           this.#events.scenarioOutlineEnded();
         });
@@ -57,10 +66,12 @@ export default class ScenarioOutline {
     const { scenarios } = this.#parsedScenarioOutline;
     const bg = this.#parsedBackgrounds;
     scenarios
-      .map(
-        (it) =>
-          new Scenario(it.title ?? '', it, this.#backgrounds, bg, this.#events)
-      )
+      .map((it) => {
+        const { container } = di();
+        return container
+          .resolve(Scenario)
+          .configure(it.title ?? '', it, this.#backgrounds, bg);
+      })
       .forEach((it) => this.#scenarios.push(it));
   }
 }

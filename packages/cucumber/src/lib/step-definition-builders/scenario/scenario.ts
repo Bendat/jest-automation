@@ -27,7 +27,7 @@ export default class Scenario extends TestGroup {
 
   constructor(events: TestTrackingEvents) {
     super();
-    this.#events = events
+    this.#events = events;
   }
 
   configure(
@@ -36,11 +36,11 @@ export default class Scenario extends TestGroup {
     backgrounds: Background[],
     parsedBackgrounds: GherkinBackground[]
   ) {
-    this.title = title;
+    this._title = title;
     this.#parsedScenario = parsedScenario;
     this.#backgrounds = backgrounds;
     this.#parsedBackgrounds = parsedBackgrounds;
-    return this
+    return this;
   }
 
   execute(
