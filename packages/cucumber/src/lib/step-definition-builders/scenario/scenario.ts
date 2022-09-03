@@ -27,7 +27,7 @@ export default class Scenario extends TestGroup {
 
   constructor(events: TestTrackingEvents) {
     super();
-    this.#events = events
+    this.#events = events;
   }
 
   configure(
@@ -40,7 +40,7 @@ export default class Scenario extends TestGroup {
     this.#parsedScenario = parsedScenario;
     this.#backgrounds = backgrounds;
     this.#parsedBackgrounds = parsedBackgrounds;
-    return this
+    return this;
   }
 
   execute(

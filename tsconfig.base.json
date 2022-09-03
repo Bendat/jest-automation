@@ -21,7 +21,8 @@
       "@jest-automation/e2e": ["packages/e2e/src/index.ts"],
       "@jest-automation/shared-utilities": [
         "packages/shared-utilities/src/index.ts"
-      ]
+      ],
+      "@jest-automation/store": ["packages/store/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

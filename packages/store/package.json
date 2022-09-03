@@ -1,0 +1,8 @@
+{
+  "name": "@jest-automation/store",
+  "version": "0.0.1",
+  "dependencies": {
+    "tslib": "^2.4.0",
+    "tsyringe": "^4.7.0"
+  }
+}
