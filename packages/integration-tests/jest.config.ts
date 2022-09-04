@@ -2,6 +2,8 @@
 export default {
   displayName: 'integration-tests',
   preset: '../../jest.preset.js',
+  testMatch: ['**/*.steps.ts', '**/*.spec.ts'],
+  setupFilesAfterEnv: ['./automation.setup.ts'],
   globals: {
     'ts-jest': {
       tsconfig: '<rootDir>/tsconfig.spec.json',

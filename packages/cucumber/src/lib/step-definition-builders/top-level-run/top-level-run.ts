@@ -45,7 +45,7 @@ export class TopLevelRun extends TestGroup {
       const bgs = [...outerBackgrounds, ...backgrounds];
       const scen = container
         .resolve(Scenario)
-        .configure(this._title ?? '', scenario, [], bgs);
+        .configure(scenario.title ?? '', scenario, [], bgs);
 
       scen.loadDefinedSteps(...this.#steps);
       parent.scenarios.push(scen);
