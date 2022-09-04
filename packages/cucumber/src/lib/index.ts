@@ -1,2 +1,2 @@
-export * from './run-feature';
-export { Steps as ScenarioInnerCallback } from './types';
+export { Feature } from './run-feature';
+export { Steps } from './types';

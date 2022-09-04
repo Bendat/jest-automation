@@ -49,6 +49,4 @@ function getFeature(file: string) {
  * @param featureCallback The actions to take to test your feature file
  * @param featurePath The path to the feature file. Can be relative to the test file, absolute, or derived from the root of the running project with `~/`
  */
-const Feature = runFeatureFile;
-
-export default Feature;
+export const Feature = runFeatureFile;

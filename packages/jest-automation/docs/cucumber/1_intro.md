@@ -6,6 +6,14 @@ It replaces Cucumber with a callback style of test using `Scenarios`, `Scenario 
 
 This library was inspired by [jest-cucumber](https://github.com/bencompton/jest-cucumber)
 
+:::note
+This project uses [tsyringe](https://github.com/microsoft/tsyringe) internally and depends on [reflect-metadata](https://www.npmjs.com/package/reflect-metadata);
+
+You must ensure that `import 'reflect-metadata'` is one
+of the first imports made in your tests. One place to
+put this could be the first line of your [configuration file](Configuration/1_setup.md)
+:::
+
 # Getting Started
 
 ```bash title="Install Jest-Automation"
@@ -31,17 +39,18 @@ import { Feature } from '@jest-automation/cucumber';
 
 Feature(() => {}, './features/SearchHouses.feature');
 ```
+
 :::info
- The path to the feature file can be specified relative to the current
- file position by starting with `./`, `../` or no prefix.
- The prefix `~/` will attempt to load the file relative to the root
- of the running project, while an absolute path will be used as is.
+The path to the feature file can be specified relative to the current
+file position by starting with `./`, `../` or no prefix.
+The prefix `~/` will attempt to load the file relative to the root
+of the running project, while an absolute path will be used as is.
 :::
 The `Feature` function takes a callback which provides as an argument an object containing the following test functions:
 
 - `Scenario`
 - `ScenarioOutline`
-- `All`
+- [`All`](2_all-steps.md)
 
 Also provided is a shared step `Background` function which will be applied to all relevant scenarios, and a `Rule`, which behaves like
 a `Feature` and provides `Scenario` and `ScenarioOutline`.
@@ -74,11 +83,31 @@ Feature(({ Scenario }) => {
     });
 
     Then('I receive a list of results', () => {
-      const expected = [
-        { address: '1 Pilsbury Lane', bedrooms: 2, bathrooms: 'cost extra' },
-      ];
-      expect(Searcher.result).toStrictEqual(expected);
+      const expected = { address: '1 Pilsbury Lane', bedrooms: 2 };
+      expect(Searcher.result).toContain(expected);
     });
+  });
+}, './features/SearchHouses.feature');
+```
+
+```ts title='Scenario Outline'
+Feature(({ ScenarioOutline }) => {
+  ScenarioOutline('I Can Search For A House', ({ Given, When, Then }) => {
+    Given('I am looking for a house in {string}', (city) => {
+      Searcher.setLocation(city);
+    });
+
+    When('I search for houses', () => {
+      Searcher.executeSearch();
+    });
+
+    Then(
+      'I receive a list of results containing {string} with {number} bedrooms',
+      (address: string, bedrooms: number) => {
+        const expected = { address, bedrooms };
+        expect(Searcher.result).toContain(expected);
+      }
+    );
   });
 }, './features/SearchHouses.feature');
 ```
@@ -210,4 +239,12 @@ Feature(({ Background, Scenario, Rule })=>{
 
 ```
 
-> note: Rules can also have a Background
+:::tip
+Rules can also have a Background
+:::
+
+## Storing Data Between Steps and Shared steps in a Test
+
+The are [storage container](7_data.md) objects available to each
+test instance. These are automatically injected into every scenario
+and are unique to each scenario.

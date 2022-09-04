@@ -4,10 +4,10 @@ import {
   GherkinScenarioOutline,
   GherkinStep,
 } from '../../parsing/gherkin-objects';
-import ScenarioOutline from './scenario-outline';
+import {ScenarioOutline} from './scenario-outline';
 import TestTrackingSubscribers from '../../tracking/test-subscribers';
 import TestTrackingEvents from '../../tracking/test-tracker';
-
+import { Global } from '@jest/types';
 describe('scenario outline', () => {
   describe('scenario', () => {
     describe('execute', () => {
@@ -45,7 +45,7 @@ describe('scenario outline', () => {
         const group = jest.fn((...args: (() => void)[]) =>
           args[1]()
         ) as unknown as jest.Describe;
-        const testFn = jest.fn() as unknown as jest.It;
+        const testFn = jest.fn() as unknown as Global.ItBase;
         const afterAll = jest.fn();
         const beforeAll = jest.fn();
         sut.execute(group, testFn, false, afterAll, beforeAll);

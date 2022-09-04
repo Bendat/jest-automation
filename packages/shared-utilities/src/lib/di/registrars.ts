@@ -3,7 +3,7 @@ import { container, DependencyContainer, Lifecycle } from 'tsyringe';
 import { Class } from '../data-utilities';
 
 import { Injectable } from './injectable';
-export const idFloat = Math.random();
+
 export type DiContainerWithDefaults = {
   container: DependencyContainer;
   providers: Provider[];

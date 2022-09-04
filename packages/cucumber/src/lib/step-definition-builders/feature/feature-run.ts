@@ -47,7 +47,7 @@ export default class FeatureRun extends Category {
       afterAll(() => {
         this._events.featureEnded();
       });
-      if (this.#run?.execute(testGrouping, test)) {
+      if (this.#run?.execute(testGrouping, testFn)) {
         // don't run other tests if all is specified
         return;
       }

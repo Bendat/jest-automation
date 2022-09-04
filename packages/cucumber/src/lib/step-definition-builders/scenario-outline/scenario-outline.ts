@@ -8,9 +8,9 @@ import {
 import TestTrackingEvents from '../../tracking/test-tracker';
 import { Steps } from '../../types';
 import Background from '../backgrounds/background';
-import Scenario from '../scenario/scenario';
+import { Scenario } from '../scenario/scenario';
 
-export default class ScenarioOutline {
+export class ScenarioOutline {
   #parsedScenarioOutline: GherkinScenarioOutline;
   #parsedBackgrounds: GherkinBackground[];
   #scenarios: Scenario[] = [];
@@ -34,7 +34,7 @@ export default class ScenarioOutline {
   loadDefinedSteps(...callbacks: Steps[]) {
     for (const scenario of this.#scenarios) {
       callbacks.forEach((callback) => {
-        callback(scenario);
+        callback(scenario, scenario.Store);
       });
     }
   }

@@ -23,13 +23,13 @@ Feature: Some Feature
 To apply a filter to a test, add it as the environment variable `CUCUMBER_FILTER`
 
 ```bash title="In Shell/Terminal"
-export CUCUMBER_FILTER="@web and not @mobile@"
+export CUCUMBER_FILTER="@web and not @mobile"
 ```
 
 ```cmd title="In Powershell"
-$env:CUCUMBER_FILTER = "@web and not @mobile@"
+$env:CUCUMBER_FILTER = "@web and not @mobile"
 ```
 
 ```ini title="In .env file"
-CUCUMBER_FILTER="@web and not @mobile@"
+CUCUMBER_FILTER="@web and not @mobile"
 ```

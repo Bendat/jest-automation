@@ -13,8 +13,8 @@ import { test, describe } from '@jest/globals';
 import { Global } from '@jest/types';
 import { matchesFilter } from '../tag-filtering/tag-filtering';
 import Background from './backgrounds/background';
-import ScenarioOutline from './scenario-outline/scenario-outline';
-import Scenario from './scenario/scenario';
+import { ScenarioOutline } from './scenario-outline/scenario-outline';
+import { Scenario } from './scenario/scenario';
 import { di } from '@jest-automation/shared-utilities';
 
 interface Group<T> {
@@ -117,7 +117,7 @@ export default abstract class Category {
       }
       const matches = matchesFilter(Env.filterQuery, tags);
       const realGroup = groupFn ?? this._getGroupFunction(matches);
-      const realTest = testFn ?? this._getTestFunction(matches);
+      const realTest = (testFn ?? this._getTestFunction(matches)) as Global.ItBase;
       matching.execute(realGroup, realTest, this._isSkipped(matches));
     }
   }
@@ -150,7 +150,7 @@ export default abstract class Category {
         );
       }
       const matches = matchesFilter(Env.filterQuery, tags);
-      const realTest = testFn ?? this._getTestFunction(matches);
+      const realTest = (testFn ?? this._getTestFunction(matches)) as Global.ItBase;
       matching.execute(realTest, this._isSkipped(matches));
     }
   }

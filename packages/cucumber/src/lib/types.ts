@@ -1,3 +1,5 @@
+import { Provider } from '@jest-automation/shared-utilities';
+import { Store, World } from '@jest-automation/store';
 import { GherkinTable } from './parsing/gherkin-objects';
 
 export type StepCallbackProvider = (
@@ -108,7 +110,47 @@ export interface StepFunctions {
  * ```
  */
 export interface Steps {
-  (callbacks: StepFunctions): void | Promise<void>;
+  (callbacks: StepFunctions, data: DataStoreArgument): void | Promise<void>;
+}
+
+/**
+ * Callback argument which provides methods for storing data
+ * between steps, including shared steps.
+ * 
+ * *World* is a simple cache object with key:value pairs
+ * Example:
+ * ```
+ * Scenario('a scenario', ({Given, Then}, {World})=>{
+ *  Given('a step', ()=>{
+ *    World.foo = 5;
+ *  });
+ *  Then('foo is 5', ()=>{
+ *    expect(World.foo).toBe(5)
+ *  })
+ * })
+ * ```
+ * 
+ * *Store* is a storage object which can store and retrieve values.
+ * 
+ * Example:
+ * ```
+ * Scenario('a scenario', ({Given, Then}, {Store})=>{
+ *  Given('a step', ()=>{
+ *    Store.put('foo', 5);
+ *  });
+ * 
+ *  Then('foo is 5', ()=>{
+ *    const foo = Store.read<number>('foo', 6);
+ *    expect(foo).toBe(5)
+ *  })
+ * })
+ * ```
+ * 
+ * Store methods provide logging and warnings about null or undefined values.
+ */
+export interface DataStoreArgument {
+  World: World;
+  Store: Store;
 }
 
 export type ScenarioCallback = (
@@ -224,9 +266,9 @@ export interface CategoryCallbackObject {
    *   expect(1).toBe(1);
    *  });
    * });
-   * 
+   *
    * // nameless
-   * 
+   *
    * Background(({ Given }) => {
    *  Given('a holly', () => {
    *   expect(1).toBe(1);

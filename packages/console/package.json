@@ -3,6 +3,7 @@
   "version": "0.0.6",
   "license": "MIT",
   "dependencies": {
-    "get-current-line": "^6.6.0"
+    "get-current-line": "^6.6.0",
+    "jest-automation": "file:../.."
   }
 }
