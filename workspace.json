@@ -6,6 +6,7 @@
     "cucumber": "packages/cucumber",
     "dto": "packages/dto",
     "e2e": "packages/e2e",
+    "integration-tests": "packages/integration-tests",
     "jest-automation": "packages/jest-automation",
     "shared-utilities": "packages/shared-utilities",
     "store": "packages/store"

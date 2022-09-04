@@ -19,6 +19,9 @@
       "@jest-automation/cucumber": ["packages/cucumber/src/index.ts"],
       "@jest-automation/dto": ["packages/dto/src/index.ts"],
       "@jest-automation/e2e": ["packages/e2e/src/index.ts"],
+      "@jest-automation/integration-tests": [
+        "packages/integration-tests/src/index.ts"
+      ],
       "@jest-automation/shared-utilities": [
         "packages/shared-utilities/src/index.ts"
       ],
