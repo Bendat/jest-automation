@@ -1,9 +1,8 @@
 {
   "name": "@jest-automation/console",
-  "version": "0.0.6",
+  "version": "0.0.9",
   "license": "MIT",
   "dependencies": {
-    "get-current-line": "^6.6.0",
-    "jest-automation": "file:../.."
+    "get-current-line": "^6.6.0"
   }
 }

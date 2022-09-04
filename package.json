@@ -13,7 +13,7 @@
     "shared-utilities:deps:local": "npm i --prefix packages/store --registry=http://localhost:4873",
     "all:deps": "npm run console:deps && npm run cucumber:deps && npm run store:deps && npm run shared-utilities:deps",
     "all:deps:local": "npm run console:deps:local && npm run cucumber:deps:local && npm run store:deps:local && npm run shared-utilities:deps:local",
-    "build:all": "nx affected --target=build"
+    "affected:build": "nx affected --target=build"
   },
   "private": true,
   "dependencies": {
