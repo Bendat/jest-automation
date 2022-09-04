@@ -4,16 +4,29 @@
   "license": "MIT",
   "scripts": {
     "console:deps": "npm i --prefix packages/console",
+    "console:build": "nx build --prefix packages/console",
+    "console:publish": "nx publish --prefix dist/packages/console",
     "console:deps:local": "npm i --prefix packages/console --registry=http://localhost:4873",
     "cucumber:deps": "npm i --prefix packages/cucumber",
+    "cucumber:build": "nx build --prefix packages/console",
+    "cucumber:publish": "nx publish --prefix dist/packages/cucumber",
+
     "cucumber:deps:local": "npm i --prefix packages/cucumber --registry=http://localhost:4873",
     "store:deps": "npm i --prefix packages/store",
+    "store:publish": "nx publish --prefix dist/packages/store",
+    
     "store:deps:local": "npm i --prefix packages/store --registry=http://localhost:4873",
+    "store:build": "nx build --prefix packages/console",
     "shared-utilities:deps": "npm i --prefix packages/store",
     "shared-utilities:deps:local": "npm i --prefix packages/store --registry=http://localhost:4873",
+    "shared-utilities:build": "nx build --prefix packages/console",
+    "shared-utilities:publish": "nx publish --prefix dist/packages/shared-utilities",
+    
     "all:deps": "npm run console:deps && npm run cucumber:deps && npm run store:deps && npm run shared-utilities:deps",
     "all:deps:local": "npm run console:deps:local && npm run cucumber:deps:local && npm run store:deps:local && npm run shared-utilities:deps:local",
-    "affected:build": "nx affected --target=build"
+    "affected:build": "nx affected --target=build",
+    "all:build": "npm run console:build && npm run cucumber:build && npm run store:build && npm run shared-utilities:build",
+    "all:publish": "npm run console:publish && npm run cucumber:publish && npm run store:publish && npm run shared-utilities:publish"
   },
   "private": true,
   "dependencies": {
