@@ -12,7 +12,8 @@
   "dependencies": {
     "@cucumber/cucumber-expressions": "^16.0.0",
     "@jest-automation/console": "^0.0.6",
-    "@jest-automation/shared-utilities": "^0.0.3",
+    "@jest-automation/shared-utilities": "^0.0.5",
+    "@jest-automation/store": "^0.0.1",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.7.0"
   }

@@ -1,4 +1,4 @@
-import { Injectable } from '../dependency-injection/injectable';
+import { Injectable } from '@jest-automation/shared-utilities';
 import Bag from './bag';
 import TestTrackingSubscribers from './test-subscribers';
 

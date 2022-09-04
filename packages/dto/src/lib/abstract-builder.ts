@@ -31,14 +31,18 @@ export abstract class AbstractDtoBuilder<TDtoType> {
    */
 
   build = (validate = true): TDtoType => {
-    const validated = validateSync(this.#dto as unknown as object);
-    if (validate && validated.length > 0) {
-      const type = this.#dto.constructor.name;
-      const errorString = humaniseValidationErrors(type, validated);
-      console.error(errorString);
-      throw new FailedValidationError(validated.join('').trimEnd(), validated);
+    if (validate) {
+      const validated = validateSync(this.#dto as unknown as object);
+      if (validated.length > 0) {
+        const type = this.#dto.constructor.name;
+        const errorString = humaniseValidationErrors(type, validated);
+        console.error(errorString);
+        throw new FailedValidationError(
+          validated.join('').trimEnd(),
+          validated
+        );
+      }
     }
-
     return this.#dto;
   };
 
@@ -92,4 +96,3 @@ ${constraintMessages}
     .trimEnd();
   return `${base}\n${errorString}`;
 }
-

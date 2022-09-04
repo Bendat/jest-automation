@@ -10,6 +10,6 @@ import { injectable } from "tsyringe/dist/typings/decorators";
  * ```
  */
 @injectable()
-export default class World{
+export class World{
     [key: string]: unknown
 }

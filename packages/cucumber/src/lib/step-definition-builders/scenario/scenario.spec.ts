@@ -1,4 +1,7 @@
-import { GherkinBackground, GherkinScenario } from '../../parsing/gherkin-objects';
+import {
+  GherkinBackground,
+  GherkinScenario,
+} from '../../parsing/gherkin-objects';
 import Scenario from './scenario';
 import TestTrackingSubscribers from '../../tracking/test-subscribers';
 import TestTrackingEvents from '../../tracking/test-tracker';
@@ -21,7 +24,8 @@ describe('scenario', () => {
       const spy = jest.spyOn(events, 'scenarioStarted');
 
       const scenario = new GherkinScenario('test', [], undefined, []);
-      const sut = new Scenario('test', scenario, [], [], events);
+      const sut = new Scenario(events);
+      sut.configure('test', scenario, [], []);
 
       sut.execute(jestItMock as unknown as jest.It);
       expect(jestItMock).toBeCalledTimes(1);
@@ -47,13 +51,8 @@ describe('scenario', () => {
         };
         const background = new Background('', cb);
         const rawBackground = new GherkinBackground('', [step]);
-        const sut = new Scenario(
-          'test',
-          scenario,
-          [background],
-          [rawBackground],
-          events
-        );
+        const sut = new Scenario(events);
+        sut.configure('test', scenario, [background], [rawBackground]);
         sut.execute(jestItMock as unknown as jest.It);
         expect(jestItMock).toBeCalledTimes(1);
         expect(sut.steps.Given['a test'].action).toBeCalledTimes(1);
@@ -77,7 +76,9 @@ describe('scenario', () => {
         };
         const background = new Background('', cb);
 
-        const sut = new Scenario('test', scenario, [background], [], events);
+        const sut = new Scenario(events);
+        sut.configure('test', scenario, [background], []);
+
         const testFn = (_: string, fn: (...args: unknown[]) => unknown) => {
           testExecuted = true;
           return fn();
@@ -97,8 +98,8 @@ describe('scenario', () => {
         // itself but here it is not.
         let stepExecuted = false;
         let testExecuted = false;
-
-        const sut = new Scenario('test', scenario, [], [], events);
+        const sut = new Scenario(events);
+        sut.configure('test', scenario, [], []);
         const { Given } = sut;
         Given('a test', () => {
           stepExecuted = true;

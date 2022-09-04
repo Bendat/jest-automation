@@ -20,7 +20,7 @@ export enum StoreAction {
  * an exception, or simply print an error.
  */
 @injectable()
-export default class Store {
+export class Store {
   #history: History = {};
   #data: Cache = {};
   #validateValuesNotEmpty: boolean;

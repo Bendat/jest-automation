@@ -1,6 +1,6 @@
+import { di } from '@jest-automation/shared-utilities';
 import { afterAll, beforeAll } from '@jest/globals';
 import { Global } from '@jest/types';
-import { di } from '../../dependency-injection/registrars';
 import {
   GherkinScenarioOutline,
   GherkinBackground,

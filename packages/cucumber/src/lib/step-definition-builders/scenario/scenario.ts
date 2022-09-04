@@ -1,5 +1,5 @@
+import { Injectable } from '@jest-automation/shared-utilities';
 import { Global } from '@jest/types';
-import { Injectable } from '../../dependency-injection/injectable';
 import { GherkinTestValidationError } from '../../errors/validation-errors';
 import {
   GherkinScenario,
