@@ -15,7 +15,7 @@ import { matchesFilter } from '../tag-filtering/tag-filtering';
 import Background from './backgrounds/background';
 import ScenarioOutline from './scenario-outline/scenario-outline';
 import Scenario from './scenario/scenario';
-import { di } from '../dependency-injection/registrars';
+import { di } from '@jest-automation/shared-utilities';
 
 interface Group<T> {
   [key: string]: T;
