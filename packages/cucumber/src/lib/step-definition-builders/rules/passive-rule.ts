@@ -1,8 +1,8 @@
 import TestTrackingEvents from '../../tracking/test-tracker';
 import { Steps } from '../../types';
 import Category from '../category';
-import ScenarioOutline from '../scenario-outline/scenario-outline';
-import Scenario from '../scenario/scenario';
+import { ScenarioOutline } from '../scenario-outline/scenario-outline';
+import { Scenario } from '../scenario/scenario';
 import {Global} from '@jest/types'
 import {beforeAll, afterAll} from '@jest/globals'
 

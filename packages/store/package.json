@@ -1,7 +1,9 @@
 {
   "name": "@jest-automation/store",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
+    "@jest-automation/shared-utilities": "^0.0.5",
+    "jest-automation": "file:../..",
     "tslib": "^2.4.0",
     "tsyringe": "^4.7.0"
   }

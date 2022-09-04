@@ -1,5 +1,6 @@
+import { Injectable } from '@jest-automation/shared-utilities';
+import { Store, World } from '@jest-automation/store';
 import { Global } from '@jest/types';
-import { Injectable } from '../../dependency-injection/injectable';
 import { GherkinTestValidationError } from '../../errors/validation-errors';
 import {
   GherkinScenario,
@@ -17,19 +18,21 @@ import {
 import { throwErrorIfNoMatch } from '../../utils';
 import Background from '../backgrounds/background';
 import { TestGroup } from '../test-group/test-group';
-
+import '../../dependency-injection/default-injected'
 @Injectable()
-export default class Scenario extends TestGroup {
+export class Scenario extends TestGroup {
   #parsedScenario: GherkinScenario;
   #backgrounds: Background[] = [];
   #parsedBackgrounds: GherkinBackground[];
   #events: TestTrackingEvents;
+  #store: {Store: Store, World: World};
 
-  constructor(events: TestTrackingEvents) {
+  constructor(world: World, store: Store, events: TestTrackingEvents) {
     super();
     this.#events = events;
+    this.#store = {World: world, Store: store}
   }
-
+  get Store(){ return this.#store}
   configure(
     title: string,
     parsedScenario: GherkinScenario,
@@ -70,7 +73,7 @@ export default class Scenario extends TestGroup {
     const { Given, When, Then, And, But, Shared } = this;
     const params = { Given, When, Then, And, But, Shared };
     callbacks.forEach((callback) => {
-      callback(params);
+      callback(params,this.Store);
     });
   }
 

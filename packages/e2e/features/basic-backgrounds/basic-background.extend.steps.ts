@@ -1,4 +1,4 @@
-import Feature from "../../../cucumber/src/lib/run-feature";
+import { Feature } from "../../../cucumber/src";
 
 /**
  * The Background callback can extend into the opening

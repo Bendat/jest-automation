@@ -1,10 +1,19 @@
-import { injectable } from 'tsyringe';
+import { Injectable } from '@jest-automation/shared-utilities';
 
 export enum StoreAction {
   PUT = 'PUT',
   READ = 'READ',
 }
-
+export interface ValidationOptions {
+  /**
+   * Whether or not to print a warning message on a null or undefined value
+   */
+  warn?: boolean;
+  /**
+   * Whether or not to throw an error on a null or undefined value
+   */
+  throws?: boolean;
+}
 /**
  * A Storage model for sharing data in tests.
  *
@@ -18,20 +27,13 @@ export enum StoreAction {
  *
  * When enabled, `put` and `read` can also be individually configured to throw
  * an exception, or simply print an error.
+ * 
+ * This class is injectable with and requires `tsyringe`.
  */
-@injectable()
-export default class Store {
+@Injectable()
+export class Store {
   #history: History = {};
   #data: Cache = {};
-  #validateValuesNotEmpty: boolean;
-
-  /**
-   * Constructs a new Store.
-   * @param validateValuesNotEmpty If enabled, values will be checked for emptiness and errors/warnings will be thrown/shown during read or put
-   */
-  constructor(validateValuesNotEmpty = true) {
-    this.#validateValuesNotEmpty = validateValuesNotEmpty;
-  }
 
   /**
    * Adds a new item to the Store. If validation
@@ -39,13 +41,17 @@ export default class Store {
    *
    * @param name The name to store this value under
    * @param value The value to be stored
-   * @param throwIfNullOrUndefined if enabled, throws an error on null or undefined values. Defaults to true.
+   * @param validate validation options to be used for processing. If `throws` is true, an error will be thrown on a null or undefined value. Similarly, if `warn` is true, a console warning will be printed.
    */
-  put<T>(name: string, value: T, throwIfNullOrUndefined = true) {
+  put<T>(name: string, value: T, validate?: ValidationOptions) {
     this._checkHistory(name);
-    if (this.#validateValuesNotEmpty && isUndefined(value)) {
-      throwIfConfigured(name, StoreAction.PUT, throwIfNullOrUndefined);
-      this._markFailure(name, value as undefined);
+    const valueNotDefined = isUndefined(value);
+    if (validate && valueNotDefined) {
+      const { warn, throws } = validate;
+      if (throws === true) {
+        throwIfConfigured(name, StoreAction.PUT);
+      }
+      this._markFailure(name, value as undefined, warn === true);
     } else {
       this.#data[name] = value;
       this._markSuccess(name, value);
@@ -57,16 +63,22 @@ export default class Store {
    * is enabled, empty (null, undefined) values will throw an error or display a warning.
    *
    * @param name The name the value is stored under for retrieval.
-   * @param throwIfNullOrUndefined
-   * @returns if enabled, throws an error on null or undefined values. Defaults to true.
+   * @param validate validation options to be used for processing. If `throws` is true, an error will be thrown on a null or undefined value. Similarly, if `warn` is true, a console warning will be printed.
+   * 
+   * @returns the value whose key matches the string parameter, or undefined.
    */
-  read<TReturn>(name: string, throwIfNullOrUndefined = true): TReturn {
+  read<TReturn>(name: string, validate?: ValidationOptions): TReturn {
     const value = this.#data[name];
-    if (this.#validateValuesNotEmpty && isUndefined(value)) {
-      throwIfConfigured(name, StoreAction.READ, throwIfNullOrUndefined);
-      logReadFailure(name, value as undefined);
+    const valueNotDefined = isUndefined(value);
+    if (validate && valueNotDefined) {
+      const { warn, throws } = validate;
+      if (throws === true) {
+        throwIfConfigured(name, StoreAction.PUT);
+      }
+      if (warn === true) {
+        logReadFailure(name, value as undefined);
+      }
     }
-
     return value as TReturn;
   }
 
@@ -74,7 +86,7 @@ export default class Store {
    * Generates an object detailing all the values in the test context,
    * their name, and the number of successfully or unsuccessful (null, undefined)
    * attempts to add a value with that name.
-   * 
+   *
    * @param forInput Filter the report to a single named entry
    * @returns An object representing the report.
    */
@@ -109,9 +121,11 @@ export default class Store {
     }
   }
 
-  private _markFailure(name: string, value: null | undefined) {
+  private _markFailure(name: string, value: null | undefined, warn: boolean) {
     const history = this.#history[name];
-    logPutFailure(history, name, value);
+    if (warn) {
+      logPutFailure(history, name, value);
+    }
     this.#history[name].failures++;
     this.#history[name].values.push(value);
   }
@@ -165,14 +179,8 @@ function logReadFailure(name: string, value: null | undefined) {
 `);
 }
 
-function throwIfConfigured(
-  name: string,
-  action: StoreAction,
-  shouldThrow: boolean
-) {
-  if (shouldThrow) {
-    throw new Error(`Cannot ${action} a null or undefined value for ${name}`);
-  }
+function throwIfConfigured(name: string, action: StoreAction) {
+  throw new Error(`Cannot ${action} a null or undefined value for ${name}`);
 }
 
 interface HistoricalItem {

@@ -6,7 +6,17 @@ Regex or [Cucumber Expressions](https://github.com/cucumber/cucumber-expressions
 Once extracted, the variable will be passed to the argument list
 of the Step function being executed.
 
-> N.b while the expression or regex might match a non-string value, a string value may still be returned. In most cases expression strings should transform the type of the data. Custom parameter transformers are not currently supported.
+:::caution
+
+Cucumber expressions will attempt to coerce the
+type of the provided variable to the correct javascript
+type. Custom parameter types are not currently supported
+for Cucumber expressions.
+
+Regex steps do not currently have type coercion, and
+all variables  will be considered a string.
+
+:::
 
 ## Cucumber Expressions Example
 

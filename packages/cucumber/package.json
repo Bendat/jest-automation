@@ -1,19 +1,25 @@
 {
   "name": "@jest-automation/cucumber",
-  "version": "0.0.1",
+  "version": "0.0.6",
   "license": "MIT",
   "keywords": [
     "jest",
     "cucumber",
     "automation",
     "gherkin",
-    "bdd"
+    "bdd",
+    "testing"
   ],
   "dependencies": {
     "@cucumber/cucumber-expressions": "^16.0.0",
     "@jest-automation/console": "^0.0.6",
-    "@jest-automation/shared-utilities": "^0.0.3",
+    "@jest-automation/shared-utilities": "^0.0.5",
+    "@jest-automation/store": "^0.0.3",
+    "jest-automation": "file:../..",
     "reflect-metadata": "^0.1.13",
     "tsyringe": "^4.7.0"
+  },
+  "devDependencies": {
+    "@jest/types": "^29.0.2"
   }
 }

@@ -8,11 +8,11 @@ import TestTrackingEvents from '../../tracking/test-tracker';
 import { Steps } from '../../types';
 import { Global } from '@jest/types';
 import Category from '../category';
-import ScenarioOutline from '../scenario-outline/scenario-outline';
-import Scenario from '../scenario/scenario';
+import { ScenarioOutline } from '../scenario-outline/scenario-outline';
+import { Scenario } from '../scenario/scenario';
 import { TestGroup } from '../test-group/test-group';
 import { PassiveRule } from '../rules/passive-rule';
-import { di } from '../../dependency-injection/registrars';
+import { di } from '@jest-automation/shared-utilities';
 
 export class TopLevelRun extends TestGroup {
   readonly callbacks: Steps[] = [];
@@ -45,7 +45,7 @@ export class TopLevelRun extends TestGroup {
       const bgs = [...outerBackgrounds, ...backgrounds];
       const scen = container
         .resolve(Scenario)
-        .configure(this._title ?? '', scenario, [], bgs);
+        .configure(scenario.title ?? '', scenario, [], bgs);
 
       scen.loadDefinedSteps(...this.#steps);
       parent.scenarios.push(scen);
