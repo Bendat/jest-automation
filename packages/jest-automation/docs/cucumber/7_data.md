@@ -65,7 +65,7 @@ Feature(({ Scenario }) => {
     })
 
     When('they search for {string} on google', async (searchTerm)=>{
-       World.result = await  data.user.SearchGoogle(searchTerm)
+       World.result = await data.user.SearchGoogle(searchTerm)
     })
 
     Then('they see a result for {string}', (website)=>{
@@ -133,7 +133,7 @@ interface ValidationOptions {
 }
 ```
 
-When `warn` is set to true, and a value of null or undefined will cause a `console.warn` to be issued. If a read fails and `warn` is enabled, a report will be printing indicating if a value has ever been added for that key, or it was never `put`ted at all.
+When `warn` is set to true, and a value of null or undefined is added or accessed, it will cause a `console.warn` to be issued. If a read fails and `warn` is enabled, a report will be printing indicating if a value has ever been added for that key, or it was never `put`ted at all.
 
 `throws` throws an error when a null or undefined value is found.
 

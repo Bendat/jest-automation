@@ -1,6 +1,6 @@
 # Jest Automation Cucumber
 
-**Full Documentation/Getting Started can be [found here](https://bendat.github.io/jest-automation/docs/intro/)**
+**Full Documentation/Getting Started can be [found here](https://bendat.github.io/jest-automation/docs/cucumber/intro)**
 
 Jest Automation is an Cucumber alternative inspired by [jest-cucumber](https://github.com/bencompton/jest-cucumber) using structured tests that closely resemble their original feature file counterpart.
 
@@ -38,7 +38,7 @@ We can create our test:
 
 ```ts title="Step Definitions"
 import {UserDriver} from '../fugazi-ui-drivers';
-import {Feature} from 
+import {Feature} from '@jest-automation/cucumber'
 
 Feature(({ Background, Scenario, Rule }) => {
   let user: UserDriver;
