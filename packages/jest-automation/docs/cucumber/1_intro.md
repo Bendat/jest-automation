@@ -1,6 +1,6 @@
 # Intro
 
-Jest-Automation is a runner for [Cucumber](https://cucumber.io/) which runs on [Jest](https://jestjs.io/).
+[Jest-Automation](https://www.npmjs.com/package/@jest-automation/cucumber) is a runner for [Cucumber](https://cucumber.io/) which runs on [Jest](https://jestjs.io/).
 
 It replaces Cucumber with a callback style of test using `Scenarios`, `Scenario Outlines` and `Given` `When` `Then` etc steps.
 
